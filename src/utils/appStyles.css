@@ -1,0 +1,19 @@
+.container {}
+
+content-container {
+    height: 100vh;
+    padding-top: 100px;
+}
+
+.save-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 80px;
+    background-color: var(--red);
+    border-radius: 50px;
+    border: 1px solid var(--black);
+    font-size: 16px;
+    font-weight: 600;
+}

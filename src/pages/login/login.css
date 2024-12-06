@@ -1,0 +1,78 @@
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #fff;
+    /* Adjust the color to match the background of your design */
+}
+
+
+/* You might want to adjust the top margin depending on your exact design requirements */
+
+h2.text-center.mb-4 {
+    margin-bottom: 1rem;
+    /* Space between the title and the form */
+}
+
+.login-form {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 450px;
+    /* Ensure it spans the container width initially */
+    max-width: 650px;
+    /* Prevent it from growing beyond this width */
+    min-width: 320px;
+    /* Ensure it does not shrink below this width */
+    box-sizing: border-box;
+    /* Include padding and border in the total width */
+}
+
+.collaborative-text {
+    font-style: italic;
+    color: #007bff;
+    font-weight: 300;
+    /* Adjust this value based on the font you're using and the desired appearance */
+}
+
+.signup-text {
+    font-size: small;
+}
+
+
+/* Responsive Styles */
+
+@media (max-width: 768px) {
+    .login-form {
+        padding: 20px;
+        margin: 20px;
+        width: 90%;
+    }
+}
+
+@media (min-width: 992px) {
+    .login-form {
+        max-width: 500px;
+    }
+}
+
+.logo-top-left {
+    position: absolute;
+    /* Position it absolutely */
+    top: 10px;
+    /* Distance from the top */
+    left: 10px;
+    /* Distance from the left */
+    width: 100px;
+    /* Set a fixed width */
+    height: auto;
+    /* Maintain aspect ratio */
+    object-fit: contain;
+    /* Ensure the logo scales correctly */
+}
+
+.form-login {
+    align-items: center;
+}
