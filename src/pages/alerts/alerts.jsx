@@ -4,10 +4,25 @@ import Header from '../../MyComponents/Header'
 import '../template/template.css'
 import { useNavigate } from 'react-router-dom'
 import Arrrowback from '../../assets/arrow_back.png'
+import { useLocation } from 'react-router-dom'
+import api from '../../api/apiCalls'
 
 function Alerts ({ alerts }) {
-  const handlePublish = () => {
-    console.log('Publish clicked!')
+  const location = useLocation()
+  const { channelId } = location.state || {}
+
+  const handlePublish = async () => {
+    try {
+      const payload = { channelId }
+
+      const response = await api.deployMappingData(payload)
+      console.log('Deploy Channel Response:', response.data)
+
+      alert('Channel deployed successfully!')
+    } catch (error) {
+      console.error('Error deploying channel:', error)
+      alert('Failed to deploy channel.')
+    }
   }
 
   const navigate = useNavigate()
@@ -40,7 +55,7 @@ function Alerts ({ alerts }) {
 
       <div className='publish-button-container'>
         <button className='publish-button' onClick={handlePublish}>
-          Publish
+          Deploy Channel
         </button>
       </div>
     </div>

@@ -31,7 +31,7 @@ h2.text-center.mb-4 {
 }
 
 .collaborative-text {
-    font-style: italic;
+    /* font-style: italic; */
     color: #007bff;
     font-weight: 300;
     /* Adjust this value based on the font you're using and the desired appearance */

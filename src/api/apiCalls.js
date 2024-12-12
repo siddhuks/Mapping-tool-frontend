@@ -49,10 +49,32 @@ async function uploadJSON(file) {
     }
 }
 
+async function createMappingData(body) {
+    try {
+        const response = await instance.post("api/mirth/create-channel", body);
+        return response.data;
+    } catch (e) {
+        console.error("Error publishing mapping data:", e);
+        throw e;
+    }
+}
+
+async function deployMappingData(body) {
+    try {
+        const response = await instance.post("api/mirth/deploy-channel", body);
+        return response.data;
+    } catch (e) {
+        console.error("Error publishing mapping data:", e);
+        throw e;
+    }
+}
+
 const api = {
     loginUser,
     fetchHL7Message,
-    uploadJSON
+    uploadJSON,
+    createMappingData,
+    deployMappingData
 }
 
 export default api

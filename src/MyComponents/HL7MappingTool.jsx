@@ -1,169 +1,9 @@
-// import React, { useState } from 'react'
-// import api from '../api/apiCalls' // Update with your API call file path
-// import './components.css'
-
-// const HL7MappingTool = () => {
-//   const [data, setData] = useState(null)
-//   const [jsonKeys, setJsonKeys] = useState([])
-//   const [error, setError] = useState('')
-
-//   const handleSelectChange = async event => {
-//     const selectedType = event.target.value
-
-//     if (selectedType === 'select') {
-//       setData(null)
-//       return
-//     }
-
-//     try {
-//       const response = await api.fetchHL7Message(selectedType)
-//       setData(response)
-//     } catch (err) {
-//       console.error('Error fetching HL7 message:', err)
-//       setError('Failed to fetch data.')
-//     }
-//   }
-
-//   const handleFileUpload = event => {
-//     const file = event.target.files[0]
-//     if (!file) return
-
-//     const reader = new FileReader()
-//     reader.onload = () => {
-//       try {
-//         const jsonContent = JSON.parse(reader.result)
-//         setJsonKeys(flattenJsonKeys(jsonContent))
-//       } catch (err) {
-//         console.error('Error parsing JSON file:', err)
-//         setError('Invalid JSON file.')
-//       }
-//     }
-//     reader.readAsText(file)
-//   }
-
-//   const flattenJsonKeys = (obj, prefix = '') => {
-//     let keys = []
-//     for (let key in obj) {
-//       if (obj.hasOwnProperty(key)) {
-//         const path = prefix ? `${prefix}.${key}` : key
-//         if (typeof obj[key] === 'object' && obj[key] !== null) {
-//           keys = keys.concat(flattenJsonKeys(obj[key], path))
-//         } else {
-//           keys.push(path)
-//         }
-//       }
-//     }
-//     return keys
-//   }
-
-//   return (
-//     <div className='hl7-mapping-tool'>
-//       <div className='controls'>
-//         <label htmlFor='messageTypeSelect'>Select HL7 Message Type:</label>
-//         <select id='messageTypeSelect' onChange={handleSelectChange}>
-//           <option value='select'>Select a message</option>
-//           <option value='ORU_R01'>ORU_R01</option>
-//           <option value='ADT_A01'>ADT_A01</option>
-//         </select>
-
-//         <div className='file-upload'>
-//           <label htmlFor='fileUpload'>Upload JSON File:</label>
-//           <input
-//             type='file'
-//             id='fileUpload'
-//             accept='.json'
-//             onChange={handleFileUpload}
-//           />
-//         </div>
-//       </div>
-//       {error && <p className='error-message'>{error}</p>}
-//       <div className='message-container'>
-//         {data &&
-//           Object.keys(data).map((segmentName, index) => {
-//             const segment = data[segmentName]
-//             return (
-//               <div className='segment' key={index}>
-//                 <div
-//                   className='segment-header'
-//                   onClick={e =>
-//                     (e.target.nextSibling.style.display =
-//                       e.target.nextSibling.style.display === 'none'
-//                         ? 'block'
-//                         : 'none')
-//                   }
-//                 >
-//                   {segmentName}: {segment.description}
-//                 </div>
-//                 <div className='segment-content'>
-//                   {Object.keys(segment.fields).map((fieldKey, idx) => {
-//                     const field = segment.fields[fieldKey]
-//                     const hasComponents =
-//                       field.components && field.components.length > 0
-
-//                     return (
-//                       <div className='field' key={idx}>
-//                         <div className='field-row'>
-//                           <div className='field-header'>
-//                             {fieldKey}. {field.field_name} ({field.data_type})
-//                           </div>
-//                           {!hasComponents && (
-//                             <select className='json-key-dropdown'>
-//                               <option value=''>Select JSON key</option>
-//                               {jsonKeys.map((key, i) => (
-//                                 <option key={i} value={key}>
-//                                   {key}
-//                                 </option>
-//                               ))}
-//                             </select>
-//                           )}
-//                         </div>
-//                         {hasComponents && (
-//                           <div
-//                             className='component-list'
-//                             style={{ display: 'none' }}
-//                           >
-//                             {field.components.map((component, cIdx) => (
-//                               <div className='component' key={cIdx}>
-//                                 <div className='field-row'>
-//                                   <div className='component-header'>
-//                                     {component.component_position}.{' '}
-//                                     {component.component_name} (
-//                                     {component.data_type})
-//                                   </div>
-//                                   <div className='field-actions'>
-//                                     <select className='json-key-dropdown'>
-//                                       <option value=''>Select JSON key</option>
-//                                       {jsonKeys.map((key, i) => (
-//                                         <option key={i} value={key}>
-//                                           {key}
-//                                         </option>
-//                                       ))}
-//                                     </select>
-//                                   </div>
-//                                 </div>
-//                               </div>
-//                             ))}
-//                           </div>
-//                         )}
-//                       </div>
-//                     )
-//                   })}
-//                 </div>
-//               </div>
-//             )
-//           })}
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default HL7MappingTool
-
 import React, { useState } from 'react'
 import api from '../api/apiCalls' // Update with your API call file path
 import './components.css'
 import '../pages/template/template.css'
 import { useNavigate } from 'react-router-dom'
+import Alerts from '../pages/alerts/alerts'
 
 const HL7MappingTool = () => {
   const [data, setData] = useState(null)
@@ -172,6 +12,7 @@ const HL7MappingTool = () => {
   const [expandedSegments, setExpandedSegments] = useState({})
   const [expandedFields, setExpandedFields] = useState({})
   const [expandedComponents, setExpandedComponents] = useState({})
+  const [mappedValues, setMappedValues] = useState({})
 
   const navigate = useNavigate()
 
@@ -245,10 +86,88 @@ const HL7MappingTool = () => {
     }))
   }
 
-  const handleNext = () => {
+  const handleValueChange = (
+    segment,
+    field,
+    component,
+    subcomponent,
+    value
+  ) => {
+    console.log('handleValueChange called with:', {
+      segment,
+      field,
+      component,
+      subcomponent,
+      value
+    })
+
+    const tmpPath = [
+      `tmp['${segment}']`,
+      `['${segment}.${field}']`,
+      component ? `['${segment}.${field}.${component}']` : null,
+      subcomponent
+        ? `['${segment}.${field}.${component}.${subcomponent}']`
+        : null
+    ]
+      .filter(Boolean) // Remove null or undefined parts
+      .join('')
+
+    const valueParts = value.split('.') // Example: ['0', 'appointment', 'date']
+    console.log(`Value Parts: ${valueParts}`)
+
+    // Dynamically construct the msg path
+    let msgPath
+
+    if (valueParts.length === 1) {
+      // If there's only one part, use the part directly as msgPath
+      msgPath = `${valueParts[0]}`
+    } else {
+      // Otherwise, construct msgPath dynamically
+      msgPath = 'msg' // Start with the root object
+      valueParts.forEach(part => {
+        if (!isNaN(part)) {
+          msgPath += `[${part}]`
+        } else {
+          msgPath += `['${part}']`
+        }
+      })
+    }
+
+    // Construct variable name
+    const variableName = [segment, field, component, subcomponent]
+      .filter(Boolean) // Remove null or undefined levels
+      .join('_') // Concatenate levels with "_"
+
+    console.log(`Variable Name: ${variableName}, Value: ${value}`)
+
+    // Update the mappedValues state
+    setMappedValues(prevValues => {
+      const updatedValues = {
+        ...prevValues,
+        [tmpPath]: msgPath
+      }
+
+      console.log('Updated Mapped Values:', updatedValues) // Log updated state
+      return updatedValues
+    })
+  }
+
+  const handleNext = async () => {
+    try {
+      const payload = { mappings: mappedValues }
+      console.log('Publishing Data:', payload)
+
+      const response = await api.createMappingData(payload)
+      console.log('Publish Response:', response.channelId)
+      alert('Data published successfully!')
+      navigate('/alerts', { state: { channelId: response.channelId } })
+    } catch (error) {
+      console.error('Error publishing data:', error)
+      alert('Failed to publish data.')
+    }
+
     console.log('Next button clicked!')
-    navigate('/alerts')
-    // Add your navigation logic or functionality here
+    // navigate('/alerts')
   }
 
   return (
@@ -258,7 +177,7 @@ const HL7MappingTool = () => {
         <select id='messageTypeSelect' onChange={handleSelectChange}>
           <option value='select'>Select a message</option>
           <option value='ORU_R01'>ORU_R01</option>
-          <option value='ADT_A01'>ADT_A01</option>
+          <option value='SIU_S12'>SIU_S12</option>
         </select>
 
         <div className='file-upload'>
@@ -327,10 +246,30 @@ const HL7MappingTool = () => {
                                   <input
                                     type='text'
                                     className='field-textbox'
-                                    placeholder={`Enter ${field.field_name}`}
+                                    placeholder={`Enter ${segmentName}_${field.field_name}`}
+                                    onChange={e =>
+                                      handleValueChange(
+                                        segmentName, // Dynamically passed segment name
+                                        fieldKey, // Dynamically passed field key
+                                        null, // Dynamically passed component position
+                                        null, // Dynamically passed subcomponent position
+                                        e.target.value // Capturing user input
+                                      )
+                                    }
                                   />
                                 ) : (
-                                  <select className='json-key-dropdown'>
+                                  <select
+                                    className='json-key-dropdown'
+                                    onChange={e =>
+                                      handleValueChange(
+                                        segmentName, // Dynamically passed segment name
+                                        fieldKey, // Dynamically passed field key
+                                        null, // Dynamically passed component position
+                                        null, // Dynamically passed subcomponent position
+                                        e.target.value // Capturing user input
+                                      )
+                                    }
+                                  >
                                     <option value=''>Select JSON key</option>
                                     {jsonKeys.map((key, i) => (
                                       <option key={i} value={key}>
@@ -394,9 +333,29 @@ const HL7MappingTool = () => {
                                             type='text'
                                             className='field-textbox'
                                             placeholder={`Enter ${component.component_name}`}
+                                            onChange={e =>
+                                              handleValueChange(
+                                                segmentName, // Dynamically passed segment name
+                                                fieldKey, // Dynamically passed field key
+                                                component.component_position, // Dynamically passed component position
+                                                null, // Dynamically passed subcomponent position
+                                                e.target.value // Capturing user input
+                                              )
+                                            }
                                           />
                                         ) : (
-                                          <select className='json-key-dropdown'>
+                                          <select
+                                            className='json-key-dropdown'
+                                            onChange={e =>
+                                              handleValueChange(
+                                                segmentName, // Dynamically passed segment name
+                                                fieldKey, // Dynamically passed field key
+                                                component.component_position, // Dynamically passed component position
+                                                null, // Dynamically passed subcomponent position
+                                                e.target.value // Capturing user input
+                                              )
+                                            }
+                                          >
                                             <option value=''>
                                               Select JSON key
                                             </option>
@@ -433,7 +392,18 @@ const HL7MappingTool = () => {
                                                 {subcomponent.subcomponent_name}{' '}
                                                 ({subcomponent.data_type})
                                               </div>
-                                              <select className='json-key-dropdown'>
+                                              <select
+                                                className='json-key-dropdown'
+                                                onChange={e =>
+                                                  handleValueChange(
+                                                    segmentName, // Dynamically passed segment name
+                                                    fieldKey, // Dynamically passed field key
+                                                    component.component_position, // Dynamically passed component position
+                                                    subcomponent.subcomponent_position, // Dynamically passed subcomponent position
+                                                    e.target.value // Capturing user input
+                                                  )
+                                                }
+                                              >
                                                 <option value=''>
                                                   Select JSON key
                                                 </option>
@@ -468,7 +438,7 @@ const HL7MappingTool = () => {
       </div>
       <div className='next-button-container'>
         <button className='next-button' onClick={handleNext}>
-          Next
+          Create Channel
         </button>
       </div>
     </div>
