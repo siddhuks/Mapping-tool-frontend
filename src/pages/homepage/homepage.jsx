@@ -44,7 +44,11 @@ const Homepage = () => {
             label='Create Template'
             navigateTo='/template'
           />
-          <ActionCard icon='upload' label='Upload file' />
+          <ActionCard
+            icon='upload'
+            label='Upload file'
+            navigateTo='/uploadAndSendPage'
+          />
         </div>
       </div>
     </div>

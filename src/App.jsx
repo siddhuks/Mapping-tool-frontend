@@ -53,6 +53,14 @@ function App () {
                   path={utils.constants.path.alerts}
                   element={<Pages.Alerts />}
                 />
+                <Route
+                  path={utils.constants.path.deployed}
+                  element={<Pages.DeployedPage />}
+                />
+                <Route
+                  path={utils.constants.path.uploadAndSendPage}
+                  element={<Pages.UploadAndSendPage />}
+                />
               </Routes>
             </div>
           </div>

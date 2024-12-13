@@ -54,7 +54,7 @@ async function createMappingData(body) {
         const response = await instance.post("api/mirth/create-channel", body);
         return response.data;
     } catch (e) {
-        console.error("Error publishing mapping data:", e);
+        console.error("Error creating channel:", e);
         throw e;
     }
 }
@@ -64,7 +64,17 @@ async function deployMappingData(body) {
         const response = await instance.post("api/mirth/deploy-channel", body);
         return response.data;
     } catch (e) {
-        console.error("Error publishing mapping data:", e);
+        console.error("Error deploying channel:", e);
+        throw e;
+    }
+}
+
+async function uploadAndSendJSON(body) {
+    try {
+        const response = await instance.post("/api/mirth/send-json", body);
+        return response.data;
+    } catch (e) {
+        console.error("Error sending JSON:", e);
         throw e;
     }
 }
@@ -74,7 +84,8 @@ const api = {
     fetchHL7Message,
     uploadJSON,
     createMappingData,
-    deployMappingData
+    deployMappingData,
+    uploadAndSendJSON
 }
 
 export default api

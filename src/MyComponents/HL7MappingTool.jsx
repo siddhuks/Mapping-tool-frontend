@@ -15,6 +15,7 @@ const HL7MappingTool = () => {
   const [mappedValues, setMappedValues] = useState({})
 
   const navigate = useNavigate()
+  const user = JSON.parse(sessionStorage.getItem('user'))
 
   const handleSelectChange = async event => {
     const selectedType = event.target.value
@@ -154,16 +155,34 @@ const HL7MappingTool = () => {
 
   const handleNext = async () => {
     try {
-      const payload = { mappings: mappedValues }
+      const user = JSON.parse(sessionStorage.getItem('user')) // Retrieve user from session storage
+      const selectedType = document.getElementById('messageTypeSelect').value
+
+      if (!selectedType || selectedType === 'select') {
+        alert('Please select a message type.')
+        return
+      }
+
+      const payload = {
+        user,
+        selectedType,
+        mappings: mappedValues
+      }
+
       console.log('Publishing Data:', payload)
 
       const response = await api.createMappingData(payload)
       console.log('Publish Response:', response.channelId)
-      alert('Data published successfully!')
-      navigate('/alerts', { state: { channelId: response.channelId } })
+      alert('Channel created successfully!')
+      navigate('/alerts', {
+        state: {
+          channelId: response.channelId,
+          contextPath: response.contextPath
+        }
+      })
     } catch (error) {
       console.error('Error publishing data:', error)
-      alert('Failed to publish data.')
+      alert('Failed to create channel.')
     }
 
     console.log('Next button clicked!')

@@ -9,16 +9,17 @@ import api from '../../api/apiCalls'
 
 function Alerts ({ alerts }) {
   const location = useLocation()
-  const { channelId } = location.state || {}
+  const { channelId, contextPath } = location.state || {}
 
   const handlePublish = async () => {
     try {
       const payload = { channelId }
 
       const response = await api.deployMappingData(payload)
-      console.log('Deploy Channel Response:', response.data)
+      console.log('Deploy Channel Response:', response)
 
       alert('Channel deployed successfully!')
+      navigate('/deployed', { state: { url: `${response.url}${contextPath}` } })
     } catch (error) {
       console.error('Error deploying channel:', error)
       alert('Failed to deploy channel.')

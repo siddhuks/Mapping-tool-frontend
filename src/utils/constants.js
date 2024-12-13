@@ -2,7 +2,9 @@ const path = {
     login: "/",
     homepage: "/homepage",
     template: "/template",
-    alerts: "/alerts"
+    alerts: "/alerts",
+    deployed: "/deployed",
+    uploadAndSendPage: "/uploadAndSendPage"
         // storyBoard: "/story-board",
         // storyBoardId: "/story-board/:id"
 }
