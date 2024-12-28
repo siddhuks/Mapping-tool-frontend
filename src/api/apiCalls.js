@@ -79,13 +79,42 @@ async function uploadAndSendJSON(body) {
     }
 }
 
+const fetchMessages = async() => {
+    try {
+        const response = await instance.get("/api/mirth/messages", {
+            headers: {
+                'Accept': 'text/plain', // Expect plain text from the server
+            },
+            responseType: 'text', // Ensure Axios interprets the response as text
+        });
+        console.log('Raw response:', response.data);
+        return response.data; // Return raw text response
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        throw error;
+    }
+};
+
+async function addEmail(body) {
+    try {
+        const response = await instance.post("api/alerts/add-email", body);
+        return response.data;
+    } catch (e) {
+        console.error("Error adding email:", e);
+        throw e;
+    }
+}
+
+
 const api = {
     loginUser,
     fetchHL7Message,
     uploadJSON,
     createMappingData,
     deployMappingData,
-    uploadAndSendJSON
+    uploadAndSendJSON,
+    fetchMessages,
+    addEmail
 }
 
 export default api

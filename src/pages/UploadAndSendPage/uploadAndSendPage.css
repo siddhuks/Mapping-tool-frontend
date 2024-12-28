@@ -1,3 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f2f5;
+    /* Subtle background for modern look */
+    color: #333;
+}
+
+input,
+button {
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
 .upload-send-container {
     display: flex;
     flex-direction: column;
@@ -88,4 +111,21 @@
 
 .back-logo {
     width: 25px;
+}
+
+.spinner-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .upload-send-container {
+        width: 90%;
+        padding: 10px;
+    }
+    .send-button {
+        width: 100%;
+    }
 }

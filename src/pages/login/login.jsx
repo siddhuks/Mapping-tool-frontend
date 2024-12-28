@@ -48,13 +48,11 @@ const Login = () => {
           </div>
         </div>
       </div> */}
+
       <div className='d-flex flex-column justify-content-center align-items-center '>
-        <img src={Logo} alt='Logo' className='logo-top-left' />
+        <img src={Logo} alt='Logo' className='logo' />
 
         {/* Text "collaborative" outside the form, centered above it */}
-
-        <h1 className='collaborative-text mb-4'>Login</h1>
-
         <div className='login-form text-center'>
           <form onSubmit={handleLogin}>
             <div className='form-group'>

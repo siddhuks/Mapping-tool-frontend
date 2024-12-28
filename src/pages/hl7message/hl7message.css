@@ -1,0 +1,65 @@
+/* Container styling */
+
+.hl7-container {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+
+/* Heading */
+
+.container h1 {
+    /* color: #007bff; */
+    font-size: 2rem;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+
+/* HL7 message display box */
+
+.hl7-messages {
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    background-color: #ffffff;
+    padding: 15px;
+    overflow-y: auto;
+    max-height: 300px;
+    text-align: left;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+
+
+/* No messages text */
+
+.no-messages {
+    color: #999;
+    font-style: italic;
+}
+
+
+/* Button styling */
+
+.button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}

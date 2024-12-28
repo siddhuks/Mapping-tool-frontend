@@ -4,7 +4,8 @@ const path = {
     template: "/template",
     alerts: "/alerts",
     deployed: "/deployed",
-    uploadAndSendPage: "/uploadAndSendPage"
+    uploadAndSendPage: "/uploadAndSendPage",
+    hl7message: "/hl7message"
         // storyBoard: "/story-board",
         // storyBoardId: "/story-board/:id"
 }

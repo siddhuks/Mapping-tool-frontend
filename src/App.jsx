@@ -61,6 +61,10 @@ function App () {
                   path={utils.constants.path.uploadAndSendPage}
                   element={<Pages.UploadAndSendPage />}
                 />
+                <Route
+                  path={utils.constants.path.hl7message}
+                  element={<Pages.HL7Messages />}
+                />
               </Routes>
             </div>
           </div>

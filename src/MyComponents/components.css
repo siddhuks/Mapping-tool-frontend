@@ -18,6 +18,69 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: relative;
     height: 95vh;
+    overflow-y: auto;
+}
+
+.step-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 30vh;
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    /* color: #007bff; */
+}
+
+.message-type-select,
+.upload-input {
+    width: 300px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.upload-json {
+    width: 35%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.next-button,
+.create-channel-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.next-button:hover,
+.create-channel-button:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 10px;
 }
 
 
@@ -25,11 +88,84 @@ body {
 
 .hl7-mapping-tool {
     width: 90%;
-    height: 95vh;
+    height: 36vh;
     margin: auto;
     background: #fff;
     padding: 20px;
     border-radius: 8px;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.message-type,
+.file-name {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.mapping-container {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    width: 80%;
+}
+
+.mapping-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.segment {
+    background: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.field {
+    margin-top: 10px;
+}
+
+.json-key-dropdown {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.create-channel-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-channel-button:hover {
+    background-color: #0056b3;
 }
 
 
@@ -44,7 +180,7 @@ h1 {
 
 .file-upload {
     position: absolute;
-    top: 20px;
+    top: 80px;
     right: 20px;
     text-align: right;
 }
@@ -52,7 +188,7 @@ h1 {
 .file-upload label {
     display: block;
     margin-bottom: 5px;
-    margin-right: 170px;
+    /* margin-right: 170px; */
     font-weight: bold;
 }
 
@@ -246,6 +382,7 @@ select {
     border-radius: 4px;
     /* Keep the rounded corners consistent */
     border: 1px solid #ccc;
+    margin-top: 20px;
     /* Maintain consistent border styling */
 }
 
@@ -368,4 +505,75 @@ input:checked+.slider:before {
 
 .slider:hover {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-description {
+    font-size: 14px;
+    margin-left: 8px;
+    color: #333;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.toggle-description {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.asterisk {
+    color: red;
+    /* Red color for asterisk */
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Space between dropdown and file upload */
+    margin-bottom: 20px;
+}
+
+.hl7-dropdown-container,
+.file-upload {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Add spacing between label and input */
+}
+
+.hl7-dropdown-container label,
+.file-upload label {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.hl7-dropdown-container select,
+.file-upload input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 220px;
+    /* Ensure consistent widths */
+}
+
+.hl7-dropdown-container label {
+    padding-bottom: 10px;
+}
+
+.back-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.back-button:hover {
+    background-color: #5a6268;
 }

@@ -58,18 +58,20 @@ h2.text-center.mb-4 {
     }
 }
 
-.logo-top-left {
+.logo {
     position: absolute;
+    /* justify-content: center; */
+    /* align-items: center; */
     /* Position it absolutely */
-    top: 10px;
+    top: 140px;
     /* Distance from the top */
-    left: 10px;
+    left: 650px;
     /* Distance from the left */
-    width: 100px;
+    width: 200px;
     /* Set a fixed width */
-    height: auto;
+    /* height: auto; */
     /* Maintain aspect ratio */
-    object-fit: contain;
+    /* object-fit: contain; */
     /* Ensure the logo scales correctly */
 }
 

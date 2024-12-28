@@ -4,11 +4,14 @@ import api from '../../api/apiCalls'
 import '../alerts/alerts.css'
 import { useNavigate } from 'react-router-dom'
 import Arrrowback from '../../assets/arrow_back.png'
+import Spinner from 'react-spinner-material'
 
 const UploadAndSendPage = () => {
   const [jsonFile, setJsonFile] = useState(null)
   const [channelId, setChannelId] = useState('')
   const [uploadError, setUploadError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
   const navigate = useNavigate()
 
   const handleBack = () => {
@@ -44,9 +47,11 @@ const UploadAndSendPage = () => {
       alert('Please enter a valid ID.')
       return
     }
-    const rawMessage = JSON.stringify(jsonFile)
+    // const rawMessage = JSON.stringify(jsonFile)
 
     const payload = { jsonFile: jsonFile, channelId }
+
+    setIsLoading(true)
 
     console.log('jsonfile: ', jsonFile)
     console.log('channelId: ', channelId)
@@ -54,7 +59,8 @@ const UploadAndSendPage = () => {
     try {
       const response = await api.uploadAndSendJSON(payload)
       console.log('resp: ', response)
-      alert('JSON sent successfully!')
+      alert('HL7 v2 Message Received')
+      navigate('/hl7message')
 
       //   const data = await response.json()
       //   if (response.ok) {
@@ -63,8 +69,19 @@ const UploadAndSendPage = () => {
       //     alert(`Failed to send JSON: ${data.error}`)
       //   }
     } catch (error) {
-      console.error('Error sending JSON:', error)
-      alert('An error occurred while sending JSON.')
+      console.error(
+        'Error sending JSON:',
+        error.response?.data?.error || error.message
+      )
+
+      // Display the validation error
+      alert(
+        `Validation failed: ${
+          error.response?.data?.error || 'An unknown error occurred'
+        }`
+      )
+    } finally {
+      setIsLoading(false) // Stop spinner
     }
   }
 
@@ -93,7 +110,7 @@ const UploadAndSendPage = () => {
         </div>
         <div className='url-section'>
           <label htmlFor='url' className='url-label'>
-            Enter Mirth ID:
+            Enter Channel ID:
           </label>
           <input
             type='text'
@@ -101,12 +118,21 @@ const UploadAndSendPage = () => {
             value={channelId}
             onChange={e => setChannelId(e.target.value)}
             className='url-input'
-            placeholder='username-messageType'
+            placeholder='Username-MessageType'
           />
         </div>
-        <button className='send-button' onClick={handleSend}>
-          Send
+        <button
+          className='send-button'
+          onClick={handleSend}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Sending...' : 'Send'}
         </button>
+        {isLoading && (
+          <div className='spinner-container'>
+            <Spinner radius={30} color={'#007bff'} stroke={3} visible={true} />
+          </div>
+        )}
       </div>
     </div>
   )

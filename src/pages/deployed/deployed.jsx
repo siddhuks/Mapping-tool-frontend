@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
 const DeployedPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { url } = location.state || {}
+  const { url, channelId } = location.state || {}
 
   const handleUpload = () => {
     // Navigate to file upload page
@@ -24,7 +24,7 @@ const DeployedPage = () => {
       <p className='deployed-description'>
         Your channel has been deployed. You can now upload files for processing
         or return to the home page. Here is the endpoint to upload json file:{' '}
-        {url}
+        {url} and Chhannel ID is {channelId}
       </p>
       <div className='deployed-actions'>
         <button className='deployed-button' onClick={handleUpload}>

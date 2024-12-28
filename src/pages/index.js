@@ -4,6 +4,7 @@ import Template from "./template/template";
 import Alerts from "./alerts/alerts";
 import DeployedPage from "./deployed/deployed";
 import UploadAndSendPage from "./UploadAndSendPage/uploadAndSendPage";
+import HL7Messages from "./hl7message/hl7message";
 // import PageNotFound from "./pageNotFound/pageNotFound";
 // import StoryBoard from "./storyboard/storyBoard";
 
@@ -13,7 +14,8 @@ const Pages = {
     Template,
     Alerts,
     DeployedPage,
-    UploadAndSendPage
+    UploadAndSendPage,
+    HL7Messages
 
 }
 
