@@ -20,11 +20,20 @@ const DeployedPage = () => {
 
   return (
     <div className='deployed-container'>
-      <h1 className='deployed-heading'>Channel Deployed Successfully!</h1>
+      <h1 className='deployed-heading'>Channel Deployed Successfully!</h1>;
       <p className='deployed-description'>
         Your channel has been deployed. You can now upload files for processing
-        or return to the home page. Here is the endpoint to upload json file:{' '}
-        {url} and Chhannel ID is {channelId}
+        or return to the home page. Here is the endpoint to upload JSON file:{' '}
+        <strong>{url}</strong> and Channel ID is <strong>{channelId}</strong>{' '}
+        <img
+          src={require('../../assets/copy.png')} // Adjust the path if necessary
+          alt='Copy to clipboard'
+          className='copy-icon'
+          onClick={() => {
+            navigator.clipboard.writeText(channelId)
+            alert('Channel ID copied to clipboard!')
+          }}
+        />
       </p>
       <div className='deployed-actions'>
         <button className='deployed-button' onClick={handleUpload}>

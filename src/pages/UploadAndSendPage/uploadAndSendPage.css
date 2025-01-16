@@ -26,11 +26,14 @@ button:active {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 80vh;
+    height: 50vh;
     background-color: #f9f9f9;
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
+    margin-top: 150px;
+    margin-right: 150px;
+    margin-left: 150px;
 }
 
 .upload-send-heading {
@@ -118,6 +121,18 @@ button:active {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.hl7-container {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 @media (max-width: 768px) {

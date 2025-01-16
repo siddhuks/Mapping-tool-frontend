@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './hl7message.css'
 import api from '../../api/apiCalls'
+import Arrrowback from '../../assets/arrow_back.png'
+import Header from '../../MyComponents/Header'
 
 const HL7Messages = () => {
   const [message, setMessage] = useState('')
+
+  const navigate = useNavigate()
+
+  const handleBack = () => {
+    navigate('/uploadAndSendPage')
+  }
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -30,7 +39,14 @@ const HL7Messages = () => {
 
   return (
     <div className='container'>
-      <h1>HL7 Message</h1>
+      <div className='back-button-container'>
+        <button className='back-button' onClick={handleBack}>
+          <img src={Arrrowback} alt='Arrowback' className='back-logo' />
+        </button>
+
+        <Header heading={'HL7 Message'} />
+      </div>
+
       <div className='hl7-messages'>
         {message ? (
           <pre>{message}</pre>

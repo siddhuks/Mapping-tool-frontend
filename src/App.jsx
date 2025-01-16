@@ -39,35 +39,35 @@ function App () {
         <>
           <div className={'container'}>
             {showHeader && <div className={'header'} />}
-            <div className={'content-container'}>
-              <Routes>
-                <Route
-                  path={utils.constants.path.homepage}
-                  element={<Pages.Homepage />}
-                />
-                <Route
-                  path={utils.constants.path.template}
-                  element={<Pages.Template />}
-                />
-                <Route
-                  path={utils.constants.path.alerts}
-                  element={<Pages.Alerts />}
-                />
-                <Route
-                  path={utils.constants.path.deployed}
-                  element={<Pages.DeployedPage />}
-                />
-                <Route
-                  path={utils.constants.path.uploadAndSendPage}
-                  element={<Pages.UploadAndSendPage />}
-                />
-                <Route
-                  path={utils.constants.path.hl7message}
-                  element={<Pages.HL7Messages />}
-                />
-              </Routes>
-            </div>
+            {/* <div className={'content-container'}> */}
+            <Routes>
+              <Route
+                path={utils.constants.path.homepage}
+                element={<Pages.Homepage />}
+              />
+              <Route
+                path={utils.constants.path.template}
+                element={<Pages.Template />}
+              />
+              <Route
+                path={utils.constants.path.alerts}
+                element={<Pages.Alerts />}
+              />
+              <Route
+                path={utils.constants.path.deployed}
+                element={<Pages.DeployedPage />}
+              />
+              <Route
+                path={utils.constants.path.uploadAndSendPage}
+                element={<Pages.UploadAndSendPage />}
+              />
+              <Route
+                path={utils.constants.path.hl7message}
+                element={<Pages.HL7Messages />}
+              />
+            </Routes>
           </div>
+          {/* </div> */}
         </>
       )}
     </Router>

@@ -17,12 +17,12 @@ const Template = () => {
 
   return (
     <div className='container'>
-      {/* <div className='back-button-container'>
+      <div className='back-button-container'>
         <button className='back-button' onClick={handleBack}>
           <img src={Arrrowback} alt='Arrowback' className='back-logo' />
         </button>
-        <Header heading={'JSON to HL7 Mapping'} />
-      </div> */}
+        {/* <Header heading={'JSON to HL7 Mapping'} /> */}
+      </div>
 
       {/* <FileUpload /> */}
       <HL7MappingTool />

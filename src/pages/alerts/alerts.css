@@ -34,7 +34,7 @@
         /* Align items to the left */
         gap: 10px;
         /* Add spacing between the back button and the header */
-        margin-bottom: 20px;
+        margin-bottom: 5px;
         /* Add spacing below the header */
     }
     
@@ -67,7 +67,7 @@
     }
     
     .publish-button:hover {
-        background-color: #007bff;
+        background-color: #0056b3;
     }
     
     .back-logo {

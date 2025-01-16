@@ -11,6 +11,7 @@ function Alerts ({ alerts }) {
   const location = useLocation()
   const { channelId, contextPath } = location.state || {}
   const [email, setEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async () => {
     const user = JSON.parse(sessionStorage.getItem('user'))
@@ -34,6 +35,7 @@ function Alerts ({ alerts }) {
   const handlePublish = async () => {
     try {
       const payload = { channelId }
+      setIsLoading(true)
 
       const response = await api.deployMappingData(payload)
       console.log('Deploy Channel Response:', response)
@@ -46,6 +48,7 @@ function Alerts ({ alerts }) {
       console.error('Error deploying channel:', error)
       alert('Failed to deploy channel.')
     }
+    setIsLoading(false)
   }
 
   const navigate = useNavigate()
@@ -78,8 +81,12 @@ function Alerts ({ alerts }) {
       </div>
 
       <div className='publish-button-container'>
-        <button className='publish-button' onClick={handlePublish}>
-          Deploy Channel
+        <button
+          className='publish-button'
+          onClick={handlePublish}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Deploying...' : 'Deploy Channel'}
         </button>
       </div>
     </div>

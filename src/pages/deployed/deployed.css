@@ -3,18 +3,18 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 95vh;
     background-color: #f9f9f9;
     font-family: Arial, sans-serif;
     text-align: center;
-    padding: 20px;
+    overflow-y: auto;
 }
 
 .deployed-heading {
     font-size: 2rem;
     font-weight: bold;
     color: #007bff;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .deployed-description {
@@ -50,4 +50,18 @@
 
 .deployed-button.secondary:hover {
     background-color: #333;
+}
+
+.copy-icon {
+    width: 25px;
+    /* Adjust size as needed */
+    height: 25px;
+    /* Adjust size as needed */
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.copy-icon:hover {
+    transform: scale(1.2);
+    /* Slightly enlarge on hover for better UI feedback */
 }

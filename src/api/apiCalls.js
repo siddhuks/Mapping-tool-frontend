@@ -3,7 +3,7 @@ import utils from "../utils";
 
 const instance = axios.create({
     baseURL: 'http://localhost:5000/',
-    timeout: 10000,
+    timeout: 200000,
     headers: {
         'Content-Type': 'application/json', // Example headers
         'Authorization': `Bearer ${sessionStorage.getItem(utils.constants.localStorageItem.TOKEN)}`,

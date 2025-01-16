@@ -59,7 +59,7 @@ const UploadAndSendPage = () => {
     try {
       const response = await api.uploadAndSendJSON(payload)
       console.log('resp: ', response)
-      alert('HL7 v2 Message Received')
+      // alert('HL7 v2 Message Received')
       navigate('/hl7message')
 
       //   const data = await response.json()
@@ -93,7 +93,7 @@ const UploadAndSendPage = () => {
         </button>
       </div>
 
-      <div className='upload-send-container'>
+      <div className='upload-send-container hl7-container'>
         <h1 className='upload-send-heading'>Upload JSON and Send Data</h1>
         <div className='upload-section'>
           <label htmlFor='jsonFile' className='upload-label'>
