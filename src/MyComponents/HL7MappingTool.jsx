@@ -29,25 +29,6 @@ const HL7MappingTool = () => {
   const [repeatedSegments, setRepeatedSegments] = useState({})
 
   useEffect(() => {
-    const getSegmentMappedValues = segmentKey => {
-      console.log(`Fetching mapped values for segment: ${segmentKey}`)
-
-      const filteredValues = Object.fromEntries(
-        Object.entries(mappedValues).filter(
-          ([key]) =>
-            key.startsWith(`${segmentKey}.0.`) ||
-            key.startsWith(`${segmentKey}.`)
-        )
-      )
-
-      console.log(
-        `Mapped values for ----------------- ${segmentKey}:`,
-        filteredValues
-      )
-
-      return filteredValues
-    }
-
     if (selectedSegment && data[selectedSegment]) {
       console.log(`Selected segment: ${selectedSegment}`)
 
@@ -121,6 +102,24 @@ const HL7MappingTool = () => {
       }
     }
   }, [selectedSegment, data, segmentData, mappedValues])
+
+  const getSegmentMappedValues = segmentKey => {
+    console.log(`Fetching mapped values for segment: ${segmentKey}`)
+
+    const filteredValues = Object.fromEntries(
+      Object.entries(mappedValues).filter(
+        ([key]) =>
+          key.startsWith(`${segmentKey}.0.`) || key.startsWith(`${segmentKey}.`)
+      )
+    )
+
+    console.log(
+      `Mapped values for ----------------- ${segmentKey}:`,
+      filteredValues
+    )
+
+    return filteredValues
+  }
 
   // Use specific instance
 
