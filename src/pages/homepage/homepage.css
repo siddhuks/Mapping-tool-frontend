@@ -163,19 +163,19 @@ html {
 }
 
 .icon-dashboard {
-    background-image: url('C:/Users/sidsv/Desktop/Mapping-tool/mapping-tool-frontend/mapping-tool/src/assets/dashboard_pic.png');
+    background-image: url('../../assets/dashboard_pic.png');
     background-size: cover;
     object-fit: cover;
     width: 68px;
 }
 
 .icon-template {
-    background-image: url('C:\Users\sidsv\Desktop\Mapping-tool\mapping-tool-frontend\mapping-tool\src\assets\template_symbol.png');
+    background-image: url('../../assets/template_symbol.png');
     background-size: cover;
 }
 
 .icon-upload {
-    background-image: url('C:\Users\sidsv\Desktop\Mapping-tool\mapping-tool-frontend\mapping-tool\src\assets\file1.png');
+    background-image: url('../../assets/file1.png');
     background-size: cover;
 }
 
