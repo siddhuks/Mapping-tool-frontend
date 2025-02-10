@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Pages from './pages/index.js'
+import Pages from './pages'
 import './utils/appStyles.css'
 import utils from './utils'
 import './App.css'
@@ -30,16 +30,23 @@ function App () {
             path={utils.constants.path.login}
             element={<Pages.Login />}
           />
-          {/* <Route
+          {
+            console.log('Login part: ', isSession)
+
+            /* <Route
             path={utils.constants.path.register}
             element={<Pages.Register />}
-          /> */}
+          /> */
+          }
         </Routes>
       ) : (
         <>
           <div className={'container'}>
             {<div className={'header'} />}
-            {/* <div className={'content-container'}> */}
+            {
+              /* <div className={'content-container'}> */
+              console.log('Homepage part: ', isSession)
+            }
             <Routes>
               <Route
                 path={utils.constants.path.homepage}
