@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Logo from '../../assets/logo.png'
 import './homepage.css'
 import UserProfilePanel from '../../MyComponents/UserProfilePanel'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import ActionCard from '../../MyComponents/ActionCard'
 // import Dashboard from '../../assets/dashboard_pic.png'
 
 const Homepage = () => {
   const [isUserProfileVisible, setIsUserProfileVisible] = useState(false)
-  const token = sessionStorage.getItem('token')
+  // const token = sessionStorage.getItem('token')
   const user = JSON.parse(sessionStorage.getItem('user'))
   let firstLetter = user.username.charAt(0).toUpperCase()
   console.log('user in hp: ', user)
 
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   return (
     <div className='home-container'>

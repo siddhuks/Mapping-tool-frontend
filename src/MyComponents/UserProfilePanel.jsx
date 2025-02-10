@@ -4,11 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import utils from '../utils'
 import AppModal from './appModal/appModal'
 
-import {
-  faTimes,
-  faSignOutAlt,
-  faQuestionCircle
-} from '@fortawesome/free-solid-svg-icons'
+import { faTimes, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import '../pages/homepage/homepage.css'
 
 const UserProfilePanel = ({ onClose }) => {

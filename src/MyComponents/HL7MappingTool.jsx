@@ -11,7 +11,7 @@ const HL7MappingTool = () => {
   const [data, setData] = useState(null)
   const [jsonKeys, setJsonKeys] = useState([])
   const [error, setError] = useState('')
-  const [expandedSegments, setExpandedSegments] = useState({})
+  // const [expandedSegments, setExpandedSegments] = useState({})
   const [expandedFields, setExpandedFields] = useState({})
   const [expandedComponents, setExpandedComponents] = useState({})
   const [mappedValues, setMappedValues] = useState({})
@@ -29,6 +29,25 @@ const HL7MappingTool = () => {
   const [repeatedSegments, setRepeatedSegments] = useState({})
 
   useEffect(() => {
+    const getSegmentMappedValues = segmentKey => {
+      console.log(`Fetching mapped values for segment: ${segmentKey}`)
+
+      const filteredValues = Object.fromEntries(
+        Object.entries(mappedValues).filter(
+          ([key]) =>
+            key.startsWith(`${segmentKey}.0.`) ||
+            key.startsWith(`${segmentKey}.`)
+        )
+      )
+
+      console.log(
+        `Mapped values for ----------------- ${segmentKey}:`,
+        filteredValues
+      )
+
+      return filteredValues
+    }
+
     if (selectedSegment && data[selectedSegment]) {
       console.log(`Selected segment: ${selectedSegment}`)
 
@@ -48,7 +67,6 @@ const HL7MappingTool = () => {
 
         // Initialize inputMode to 'dropdown' for all levels (fields, components, subcomponents)
         const defaultInputMode = {}
-        const defaultToggleValidation = {}
 
         Object.entries(fields || {}).forEach(([fieldKey, field]) => {
           const fieldPath = `${selectedSegment}.${fieldKey}`
@@ -102,21 +120,21 @@ const HL7MappingTool = () => {
         }))
       }
     }
-  }, [selectedSegment, data, segmentData])
+  }, [selectedSegment, data, segmentData, mappedValues])
 
   // Use specific instance
 
-  const fieldsWithTextbox = [
-    'Field Separator',
-    'Encoding Characters',
-    'Sending Application'
-  ]
-  const componentsWithTextbox = [
-    'Namespace ID',
-    'Universal ID',
-    'Universal ID Type'
-  ]
-  const subcomponentsWithTextbox = ['Subcomponent1', 'Subcomponent2']
+  // const fieldsWithTextbox = [
+  //   'Field Separator',
+  //   'Encoding Characters',
+  //   'Sending Application'
+  // ]
+  // const componentsWithTextbox = [
+  //   'Namespace ID',
+  //   'Universal ID',
+  //   'Universal ID Type'
+  // ]
+  // const subcomponentsWithTextbox = ['Subcomponent1', 'Subcomponent2']
 
   const updateSegmentStatus = (segment, value) => {
     setSegmentStatus(prevStatus => ({
@@ -448,26 +466,8 @@ const HL7MappingTool = () => {
     )
   }
 
-  const getSegmentMappedValues = segmentKey => {
-    console.log(`Fetching mapped values for segment: ${segmentKey}`)
-
-    const filteredValues = Object.fromEntries(
-      Object.entries(mappedValues).filter(
-        ([key]) =>
-          key.startsWith(`${segmentKey}.0.`) || key.startsWith(`${segmentKey}.`)
-      )
-    )
-
-    console.log(
-      `Mapped values for ----------------- ${segmentKey}:`,
-      filteredValues
-    )
-
-    return filteredValues
-  }
-
   const navigate = useNavigate()
-  const user = JSON.parse(sessionStorage.getItem('user'))
+  // const user = JSON.parse(sessionStorage.getItem('user'))
 
   const handleSegmentClick = segmentName => {
     // const instanceCount = repeatedSegments[segmentName] || 1
@@ -514,49 +514,49 @@ const HL7MappingTool = () => {
     setExpandedComponents({})
   }
 
-  const segments = Object.keys(data || {})
+  // const segments = Object.keys(data || {})
 
-  const handleSelectChange = async event => {
-    // if (selectedType === 'select') {
-    //   setData(null)
-    //   return
-    // }
+  // const handleSelectChange = async event => {
+  //   // if (selectedType === 'select') {
+  //   //   setData(null)
+  //   //   return
+  //   // }
 
-    if (!selectedMessageType) {
-      setError('Please select a message type.')
-      return
-    }
+  //   if (!selectedMessageType) {
+  //     setError('Please select a message type.')
+  //     return
+  //   }
 
-    try {
-      const response = await api.fetchHL7Message(selectedMessageType)
+  //   try {
+  //     const response = await api.fetchHL7Message(selectedMessageType)
 
-      const initialMappedValues = {}
-      Object.keys(response).forEach(segment => {
-        Object.keys(response[segment]?.fields || {}).forEach(field => {
-          const fieldPath = `${segment}.${field}`
-          initialMappedValues[fieldPath] = ''(
-            // Initialize components and subcomponents if they exist
-            response[segment]?.fields[field]?.components || []
-          ).forEach(component => {
-            const componentPath = `${fieldPath}.${component.component_position}`
-            initialMappedValues[componentPath] = ''(
-              component.subcomponents || []
-            ).forEach(subcomponent => {
-              const subcomponentPath = `${componentPath}.${subcomponent.subcomponent_position}`
-              initialMappedValues[subcomponentPath] = ''
-            })
-          })
-        })
-      })
+  //     const initialMappedValues = {}
+  //     Object.keys(response).forEach(segment => {
+  //       Object.keys(response[segment]?.fields || {}).forEach(field => {
+  //         const fieldPath = `${segment}.${field}`
+  //         initialMappedValues[fieldPath] = ''(
+  //           // Initialize components and subcomponents if they exist
+  //           response[segment]?.fields[field]?.components || []
+  //         ).forEach(component => {
+  //           const componentPath = `${fieldPath}.${component.component_position}`
+  //           initialMappedValues[componentPath] = ''(
+  //             component.subcomponents || []
+  //           ).forEach(subcomponent => {
+  //             const subcomponentPath = `${componentPath}.${subcomponent.subcomponent_position}`
+  //             initialMappedValues[subcomponentPath] = ''
+  //           })
+  //         })
+  //       })
+  //     })
 
-      setData(response)
-      setMappedValues({})
-      setStep(2)
-    } catch (err) {
-      console.error('Error fetching HL7 message:', err)
-      setError('Failed to fetch data.')
-    }
-  }
+  //     setData(response)
+  //     setMappedValues({})
+  //     setStep(2)
+  //   } catch (err) {
+  //     console.error('Error fetching HL7 message:', err)
+  //     setError('Failed to fetch data.')
+  //   }
+  // }
 
   const handlePreviousStep = () => {
     if (step > 1) {
@@ -664,12 +664,12 @@ const HL7MappingTool = () => {
     return keys
   }
 
-  const toggleSegment = segmentName => {
-    setExpandedSegments(prev => ({
-      ...prev,
-      [segmentName]: !prev[segmentName]
-    }))
-  }
+  // const toggleSegment = segmentName => {
+  //   setExpandedSegments(prev => ({
+  //     ...prev,
+  //     [segmentName]: !prev[segmentName]
+  //   }))
+  // }
 
   const toggleField = fieldPath => {
     setExpandedFields(prev => ({
@@ -898,7 +898,7 @@ const HL7MappingTool = () => {
   }
 
   const switchToTextbox = path => {
-    const [segmentKey, ...fieldPathParts] = path.split('.')
+    const [segmentKey] = path.split('.')
 
     console.log('seg key: ', segmentKey)
 
@@ -1029,7 +1029,7 @@ const HL7MappingTool = () => {
     const isCurrentlyOn = toggleValidation?.[path]?.isToggleOn
 
     // Extract base segment and check if it's a repeating segment
-    const baseSegment = segmentKey.split('.')[0]
+    // const baseSegment = segmentKey.split('.')[0]
 
     // Ensure correct path format for repeating segments
     // const normalizedPath =

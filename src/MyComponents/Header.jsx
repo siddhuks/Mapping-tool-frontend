@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import '../pages/template/template.css' // Ensure Header-specific CSS is included
 
 const Header = ({ heading }) => {

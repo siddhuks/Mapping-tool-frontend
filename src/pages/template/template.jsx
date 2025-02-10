@@ -1,8 +1,8 @@
 import React from 'react'
-import Header from '../../MyComponents/Header'
-import FileUpload from '../../MyComponents/FileUpload'
+// import Header from '../../MyComponents/Header'
+// import FileUpload from '../../MyComponents/FileUpload'
 import HL7MappingTool from '../../MyComponents/HL7MappingTool'
-import utils from '../../utils'
+// import utils from '../../utils'
 import Arrrowback from '../../assets/arrow_back.png'
 import { useNavigate } from 'react-router-dom'
 

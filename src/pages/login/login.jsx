@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import './login.css'
 import Logo from '../../assets/logo.png'
@@ -8,7 +8,7 @@ import api from '../../api/apiCalls'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 const Login = () => {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const [username, setUser] = useState('')
   const [password, setPassword] = useState('')
 

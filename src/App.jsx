@@ -7,12 +7,12 @@ import './App.css'
 
 function App () {
   const [isSession, setIsSession] = useState(true)
-  const [showHeader, setShowHeader] = useState(true)
+  // const [showHeader, setShowHeader] = useState(true)
 
   useEffect(() => {
     // localStorage.clear() // to clear all the localstorage items
     let token = sessionStorage.getItem('token')
-    setIsSession(token !== null && token != '')
+    setIsSession(token !== null && token !== '')
     console.log('Path ', utils.constants.path.template)
     // setShowHeader(window.location.pathname !== utils.constants.path.storyBoard)
     console.log(':: TOKEN ', token)
@@ -38,7 +38,7 @@ function App () {
       ) : (
         <>
           <div className={'container'}>
-            {showHeader && <div className={'header'} />}
+            {<div className={'header'} />}
             {/* <div className={'content-container'}> */}
             <Routes>
               <Route
