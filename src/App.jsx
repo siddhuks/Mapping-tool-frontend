@@ -23,61 +23,60 @@ function App () {
 
   return (
     <Router>
-      {!isSession ? (
-        <Routes>
-          <Route
-            exact
-            path={utils.constants.path.login}
-            element={<Pages.Login />}
-          />
-          {
-            console.log('Login part: ', isSession)
+      {/* {!isSession ? ( */}
+      <Routes>
+        <Route
+          exact
+          path={utils.constants.path.login}
+          element={<Pages.Login />}
+        />
+        {
+          console.log('Login part: ', isSession)
 
-            /* <Route
+          /* <Route
             path={utils.constants.path.register}
             element={<Pages.Register />}
           /> */
+        }
+      </Routes>
+      {/* ) : ( */}
+      <>
+        <div className={'container'}>
+          <div className={'header'} />
+          {
+            /* <div className={'content-container'}> */
+            console.log('Homepage part: ', isSession)
           }
-        </Routes>
-      ) : (
-        <>
-          <div className={'container'}>
-            <div className={'header'} />
-            {
-              /* <div className={'content-container'}> */
-              console.log('Homepage part: ', isSession)
-            }
-            <Routes>
-              <Route
-                exact
-                path={utils.constants.path.homepage}
-                element={<Pages.Homepage />}
-              />
-              <Route
-                path={utils.constants.path.template}
-                element={<Pages.Template />}
-              />
-              <Route
-                path={utils.constants.path.alerts}
-                element={<Pages.Alerts />}
-              />
-              <Route
-                path={utils.constants.path.deployed}
-                element={<Pages.DeployedPage />}
-              />
-              <Route
-                path={utils.constants.path.uploadAndSendPage}
-                element={<Pages.UploadAndSendPage />}
-              />
-              <Route
-                path={utils.constants.path.hl7message}
-                element={<Pages.HL7Messages />}
-              />
-            </Routes>
-          </div>
-          {/* </div> */}
-        </>
-      )}
+          <Routes>
+            <Route
+              path={utils.constants.path.homepage}
+              element={<Pages.Homepage />}
+            />
+            <Route
+              path={utils.constants.path.template}
+              element={<Pages.Template />}
+            />
+            <Route
+              path={utils.constants.path.alerts}
+              element={<Pages.Alerts />}
+            />
+            <Route
+              path={utils.constants.path.deployed}
+              element={<Pages.DeployedPage />}
+            />
+            <Route
+              path={utils.constants.path.uploadAndSendPage}
+              element={<Pages.UploadAndSendPage />}
+            />
+            <Route
+              path={utils.constants.path.hl7message}
+              element={<Pages.HL7Messages />}
+            />
+          </Routes>
+        </div>
+        {/* </div> */}
+      </>
+      {/* )} */}
     </Router>
   )
 }
