@@ -2,7 +2,7 @@ import axios from "axios";
 import utils from "../utils";
 
 const instance = axios.create({
-    baseURL: 'http://localhost:5000/',
+    baseURL: 'https://hh-backend-webapp-cnc4bqamfjb2fnbw.westeurope-01.azurewebsites.net/',
     timeout: 200000,
     headers: {
         'Content-Type': 'application/json', // Example headers
@@ -54,8 +54,23 @@ async function createMappingData(body) {
         const response = await instance.post("api/mirth/create-channel", body);
         return response.data;
     } catch (e) {
-        console.error("Error creating channel:", e);
-        throw e;
+        // console.error("Error creating channel:", e);
+        // throw e;
+        console.log("1--")
+        if (e.response) {
+            console.log("2--")
+
+            console.log('response in apiCalls: ', e.response)
+
+
+            if (e.response.status === 400) {
+                // alert(`No ports available or bad request:", ${e.response.data.error}`);
+                return { error: e.response.data.error || "Failed to create channel." };
+            }
+        }
+        return { error: "An unexpected error occurred. Please try again." };
+
+
     }
 }
 

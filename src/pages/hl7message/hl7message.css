@@ -31,7 +31,6 @@
     background-color: #ffffff;
     padding: 15px;
     overflow-y: auto;
-    max-height: 300px;
     text-align: left;
     font-family: monospace;
     white-space: pre-wrap;

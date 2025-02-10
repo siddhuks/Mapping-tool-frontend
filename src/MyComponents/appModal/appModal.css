@@ -60,8 +60,7 @@
 .app-modal-danger-btn {
     color: var(--white);
     border: none;
-    background-color: #007bff
-    /* var(--danger) !important; */
+    background-color: var(--danger) !important;
 }
 
 .app-modal-secondary-btn {

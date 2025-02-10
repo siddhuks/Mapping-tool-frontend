@@ -30,7 +30,7 @@
     .back-button-container {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        /*   */
         /* Align items to the left */
         gap: 10px;
         /* Add spacing between the back button and the header */

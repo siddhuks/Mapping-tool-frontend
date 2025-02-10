@@ -39,7 +39,7 @@ h1 {
 
 .message-type-select,
 .upload-input {
-    width: 300px;
+    width: 400px;
     padding: 10px;
     font-size: 1rem;
     border: 1px solid #ccc;
@@ -130,7 +130,7 @@ h1 {
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
+    /* margin: 20px auto; */
     width: 100%;
 }
 
@@ -154,13 +154,14 @@ h1 {
     margin-top: 10px;
 }
 
-.json-key-dropdown {
+
+/* .json-key-dropdown {
     width: 100%;
     padding: 10px;
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
+} */
 
 .create-channel-button {
     display: block;
@@ -244,7 +245,6 @@ label {
 select {
     width: 100%;
     padding: 8px;
-    margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
@@ -274,15 +274,15 @@ select {
 .subcomponent-textbox,
 .json-key-dropdown {
     flex: 1;
-    /* Let input elements take up the remaining space */
-    max-width: 300px;
-    /* Ensure consistent maximum width */
+    max-width: 80%;
+    /* Increase the width (adjust percentage as needed) */
+    width: 300px;
     min-width: 200px;
     /* Ensure consistent minimum width */
     padding: 5px;
     border-radius: 4px;
     border: 1px solid #ccc;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 
@@ -379,24 +379,10 @@ select {
 
 /* Dropdown Styling */
 
-.json-key-dropdown {
-    flex-shrink: 0;
-    /* Prevent the dropdown from shrinking */
-    max-width: 80%;
-    /* Increase the width (adjust percentage as needed) */
-    width: 300px;
-    min-width: 200px;
-    /* Optional: Set a maximum width to prevent it from being too large */
-    padding: 10px;
-    /* Increase padding for a larger click area */
-    font-size: 16px;
-    /* Increase font size for better readability */
-    border-radius: 4px;
-    /* Keep the rounded corners consistent */
-    border: 1px solid #ccc;
+
+/* .json-key-dropdown {
     margin-top: 20px;
-    /* Maintain consistent border styling */
-}
+} */
 
 
 /* Component List Indentation */
@@ -469,6 +455,7 @@ select {
     width: 40px;
     height: 20px;
     margin-left: 20px;
+    top: 12px;
 }
 
 
@@ -622,8 +609,7 @@ input:checked+.slider:before {
 
 .main-content {
     flex: 1;
-    /* Take remaining space */
-    padding: 20px;
+    padding-left: 10px;
     overflow-y: auto;
 }
 
@@ -659,4 +645,247 @@ h4 {
     /* Highlight color */
     border-left: 4px solid #ffa500;
     /* Accent border */
+}
+
+.optional-fields {
+    margin-top: 20px;
+}
+
+switch-button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+
+/* Input Container */
+
+.input-container {
+    margin-bottom: 15px;
+}
+
+
+/* Input Switcher */
+
+.input-switcher {
+    display: flex;
+}
+
+.switch-button {
+    padding: 3px 12px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.switch-button:hover {
+    background-color: #eaeaea;
+}
+
+.switch-button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.field-row,
+.component-row,
+.subcomponent-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Ensures consistent 10px spacing between all elements */
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    /* Optional row separator */
+}
+
+.field-header,
+.component-header,
+.subcomponent-header {
+    flex: 2;
+    /* Adjusts the header width to align properly */
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+    /* Optional: Prevents headers from being too wide */
+}
+
+.json-key-dropdown,
+.field-textbox,
+.component-textbox,
+.subcomponent-textbox {
+    flex: 3;
+    /* Adjusts the width of dropdowns and textboxes */
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.json-key-dropdown:focus,
+.field-textbox:focus,
+.component-textbox:focus,
+.subcomponent-textbox:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+.toggle-switch {
+    flex: 1;
+    /* Adjust width to ensure proper alignment */
+    position: relative;
+    /* display: inline-block; */
+    width: 40px;
+    height: 20px;
+    margin-left: 10px;
+    /* Ensures consistent gap with input fields */
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-switch .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.toggle-switch input:checked+.slider {
+    background-color: #007bff;
+}
+
+.toggle-switch .slider:before {
+    position: absolute;
+    content: '';
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.toggle-switch input:checked+.slider:before {
+    transform: translateX(20px);
+}
+
+@media (max-width: 768px) {
+    .field-row,
+    .component-row,
+    .subcomponent-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .field-header,
+    .component-header,
+    .subcomponent-header {
+        margin-bottom: 5px;
+    }
+    .json-key-dropdown,
+    .field-textbox,
+    .component-textbox,
+    .subcomponent-textbox,
+    .toggle-switch {
+        width: 100%;
+    }
+}
+
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+}
+
+.delete-icon {
+    font-size: 20px;
+    /* Adjust the size as needed */
+    color: #dc3545;
+    /* Red color for delete icon */
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.delete-icon:hover {
+    transform: scale(1.1);
+    /* Slightly enlarge on hover */
+    opacity: 0.8;
+    /* Reduce opacity for a subtle effect */
+}
+
+.segment-count {
+    font-size: 12px;
+    color: #555;
+    margin-left: 5px;
+}
+
+.add-button {
+    background-color: #007bff;
+    /* Blue color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-button:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+.delete-button {
+    background-color: #dc3545;
+    /* font-size: 8px; */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+    /* Darker red on hover */
+}
+
+
+/* Ensure buttons have space between them */
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    /* Space between buttons */
+    margin-top: 10px;
 }
