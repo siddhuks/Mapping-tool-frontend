@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Rings } from 'react-loader-spinner'
 import api from '../api/apiCalls' // Update with your API call file path
 import './components.css'
@@ -27,6 +27,21 @@ const HL7MappingTool = () => {
   const [inputMode, setInputMode] = useState({})
   const [addedFromOptional, setAddedFromOptional] = useState(new Set())
   const [repeatedSegments, setRepeatedSegments] = useState({})
+
+  const getSegmentMappedValues = useCallback(
+    segmentKey => {
+      console.log(`Fetching mapped values for segment: ${segmentKey}`)
+
+      return Object.fromEntries(
+        Object.entries(mappedValues).filter(
+          ([key]) =>
+            key.startsWith(`${segmentKey}.0.`) ||
+            key.startsWith(`${segmentKey}.`)
+        )
+      )
+    },
+    [mappedValues]
+  )
 
   useEffect(() => {
     if (selectedSegment && data[selectedSegment]) {
@@ -62,6 +77,8 @@ const HL7MappingTool = () => {
           })
         })
 
+        const newMappedValues = getSegmentMappedValues(selectedSegment)
+
         setInputMode(prev => ({
           ...prev,
           ...defaultInputMode
@@ -73,15 +90,21 @@ const HL7MappingTool = () => {
             requiredFields: required,
             optionalFields: optional,
             // Dynamically derive mappedValues
-            mappedValues: getSegmentMappedValues(selectedSegment),
+            mappedValues: newMappedValues,
             toggleValidation: {}
           }
         }))
       } else {
         const segmentFields = segmentData[selectedSegment]
+        const newMappedValues = getSegmentMappedValues(selectedSegment)
+
         setRequiredFields(segmentFields.requiredFields || [])
         setOptionalFields(segmentFields.optionalFields || [])
-        setMappedValues(getSegmentMappedValues(selectedSegment)) // Use derived mappings
+        setMappedValues(prev =>
+          JSON.stringify(prev) !== JSON.stringify(newMappedValues)
+            ? newMappedValues
+            : prev
+        )
         setToggleValidation(prev => ({
           ...prev, // Preserve toggleValidation from other segments
           ...segmentFields.toggleValidation // Add current segment's toggleValidation
@@ -89,9 +112,9 @@ const HL7MappingTool = () => {
 
         // Restore inputMode for the selected segment
         const restoredInputMode = Object.keys(
-          segmentFields.mappedValues || {}
+          segmentFields?.mappedValues || {}
         ).reduce((acc, fieldPath) => {
-          acc[fieldPath] = segmentFields.inputMode?.[fieldPath] || 'dropdown' // Default to dropdown if not set
+          acc[fieldPath] = segmentFields?.inputMode?.[fieldPath] || 'dropdown'
           return acc
         }, {})
 
@@ -101,25 +124,7 @@ const HL7MappingTool = () => {
         }))
       }
     }
-  }, [selectedSegment, data, segmentData, mappedValues])
-
-  const getSegmentMappedValues = segmentKey => {
-    console.log(`Fetching mapped values for segment: ${segmentKey}`)
-
-    const filteredValues = Object.fromEntries(
-      Object.entries(mappedValues).filter(
-        ([key]) =>
-          key.startsWith(`${segmentKey}.0.`) || key.startsWith(`${segmentKey}.`)
-      )
-    )
-
-    console.log(
-      `Mapped values for ----------------- ${segmentKey}:`,
-      filteredValues
-    )
-
-    return filteredValues
-  }
+  }, [selectedSegment, data, segmentData, getSegmentMappedValues])
 
   // Use specific instance
 
