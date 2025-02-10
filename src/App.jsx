@@ -42,13 +42,14 @@ function App () {
       ) : (
         <>
           <div className={'container'}>
-            {<div className={'header'} />}
+            <div className={'header'} />
             {
               /* <div className={'content-container'}> */
               console.log('Homepage part: ', isSession)
             }
             <Routes>
               <Route
+                exact
                 path={utils.constants.path.homepage}
                 element={<Pages.Homepage />}
               />
