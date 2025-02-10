@@ -16,7 +16,6 @@ const Pages = {
     DeployedPage,
     UploadAndSendPage,
     HL7Messages
-
 }
 
 export default Pages;

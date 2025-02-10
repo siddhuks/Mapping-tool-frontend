@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Pages from './pages'
+import Pages from './pages/index.js'
 import './utils/appStyles.css'
 import utils from './utils'
 import './App.css'
