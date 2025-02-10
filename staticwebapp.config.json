@@ -1,7 +1,6 @@
 {
-  "routes": [
-    {
-      "route": "/homepage"
-    }
-  ]
+    "routes": [{
+        "route": "/homepage",
+        "rewrite": "/index.html"
+    }]
 }
