@@ -40,7 +40,7 @@ const Login = () => {
     }
   }
   return (
-    <div className='login-container d-flex flex-column'>
+    <div className='login-container'>
       {/* <div className='container mt-3 '>
         <div className='row'>
           <div className='col'>
@@ -49,48 +49,48 @@ const Login = () => {
         </div>
       </div> */}
 
-      <div className='d-flex flex-column justify-content-center align-items-center '>
-        <img src={Logo} alt='Logo' className='logo' />
+      {/* <div className='d-flex flex-column justify-content-center align-items-center '> */}
+      <img src={Logo} alt='Logo' className='logo' />
 
-        {/* Text "collaborative" outside the form, centered above it */}
-        <div className='login-form text-center'>
-          <form onSubmit={handleLogin}>
-            <div className='form-group'>
-              <input
-                type='user'
-                className='form-control'
-                placeholder='Username'
-                value={username}
-                onChange={e => setUser(e.target.value)}
-                required
-              />
+      {/* Text "collaborative" outside the form, centered above it */}
+      <div className='login-form'>
+        <form onSubmit={handleLogin}>
+          <div className='form-group'>
+            <input
+              type='user'
+              className='form-control'
+              placeholder='Username'
+              value={username}
+              onChange={e => setUser(e.target.value)}
+              required
+            />
+          </div>
+          <div className='form-group mt-4'>
+            <input
+              type='password'
+              className='form-control'
+              placeholder='Password'
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className='d-flex flex-column mt-5 justify-content-center align-items-center'>
+            <div className='w-50 '>
+              <button
+                type='submit'
+                className='btn btn-dark btn-block px-5 mt-4'
+              >
+                Login
+              </button>
             </div>
-            <div className='form-group mt-4'>
-              <input
-                type='password'
-                className='form-control'
-                placeholder='Password'
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className='d-flex flex-column mt-5 justify-content-center align-items-center'>
-              <div className='w-50 '>
-                <button
-                  type='submit'
-                  className='btn btn-dark btn-block px-5 mt-4'
-                >
-                  Login
-                </button>
-              </div>
-            </div>
-            {/* <p className='signup-text mt-4'>
+          </div>
+          {/* <p className='signup-text mt-4'>
               Don't have account? <a href='/register'>Create Account</a>
             </p> */}
-          </form>
-        </div>
+        </form>
       </div>
+      {/* </div> */}
     </div>
   )
 }

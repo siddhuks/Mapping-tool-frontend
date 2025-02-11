@@ -1,10 +1,12 @@
 .login-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
     background-color: #fff;
-    /* Adjust the color to match the background of your design */
+    text-align: center;
+    /* Ensure text is centered */
 }
 
 
@@ -21,13 +23,9 @@ h2.text-center.mb-4 {
     border-radius: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 450px;
-    /* Ensure it spans the container width initially */
     max-width: 650px;
-    /* Prevent it from growing beyond this width */
     min-width: 320px;
-    /* Ensure it does not shrink below this width */
     box-sizing: border-box;
-    /* Include padding and border in the total width */
 }
 
 .collaborative-text {
@@ -59,20 +57,14 @@ h2.text-center.mb-4 {
 }
 
 .logo {
-    position: absolute;
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* Position it absolutely */
-    top: 140px;
-    /* Distance from the top */
-    left: 650px;
-    /* Distance from the left */
+    display: block;
+    /* Ensures it behaves as a block element */
+    margin: 0 auto 20px;
+    /* Centers it horizontally and adds spacing below */
     width: 200px;
-    /* Set a fixed width */
-    /* height: auto; */
+    /* Adjust width as needed */
+    height: auto;
     /* Maintain aspect ratio */
-    /* object-fit: contain; */
-    /* Ensure the logo scales correctly */
 }
 
 .form-login {
