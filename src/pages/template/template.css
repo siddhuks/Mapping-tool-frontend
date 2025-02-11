@@ -108,13 +108,6 @@ select:focus {
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-.field-header:hover,
-.component-header:hover,
-.subcomponent-header:hover {
-    /* background: #007bff; */
-    color: #ffffff;
-}
-
 
 /* Buttons */
 

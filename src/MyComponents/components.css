@@ -370,12 +370,6 @@ select {
     /* Rotate the chevron when expanded */
 }
 
-.component-header:hover,
-.subcomponent-header:hover {
-    background-color: #e6f7ff;
-    /* Highlight effect on hover */
-}
-
 
 /* Dropdown Styling */
 
