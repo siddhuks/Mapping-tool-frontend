@@ -6,6 +6,7 @@ import '../pages/template/template.css'
 import '../pages/hl7message/hl7message.css'
 import { useNavigate } from 'react-router-dom'
 import { FaTrash } from 'react-icons/fa'
+import ValModal from './appModal/ValModal'
 
 const HL7MappingTool = () => {
   const [data, setData] = useState(null)
@@ -27,6 +28,14 @@ const HL7MappingTool = () => {
   const [inputMode, setInputMode] = useState({})
   const [addedFromOptional, setAddedFromOptional] = useState(new Set())
   const [repeatedSegments, setRepeatedSegments] = useState({})
+  const [isValModalOpen, setIsValModalOpen] = useState(false)
+  const [selectedFieldPath, setSelectedFieldPath] = useState('')
+  const [validationType, setValidationType] = useState('Max Length')
+  const [operator, setOperator] = useState('<')
+  const [validationValue, setValidationValue] = useState('')
+  const [fieldValidations, setFieldValidations] = useState({}) // Stores validation rules per field/component/subcomponent
+  const [availableValidationTypes, setAvailableValidationTypes] = useState({})
+  const [trimWhitespace, setTrimWhitespace] = useState({})
 
   const getSegmentMappedValues = useCallback(
     segmentKey => {
@@ -148,6 +157,101 @@ const HL7MappingTool = () => {
           ([mappedKey, mappedValue]) =>
             mappedKey.startsWith(segment) && mappedValue.trim() !== ''
         ) || value.trim() !== ''
+    }))
+  }
+
+  const getFullKey = (
+    segmentKey,
+    fieldKey,
+    componentKey = '',
+    subcomponentKey = ''
+  ) => {
+    let baseKey = getFieldKey(segmentKey, fieldKey) // Use getFieldKey to handle repeating segments
+    if (componentKey) baseKey += `.${componentKey}`
+    if (subcomponentKey) baseKey += `.${subcomponentKey}`
+    return baseKey
+  }
+
+  const handleAddValue = (
+    segmentKey,
+    fieldKey,
+    componentKey = '',
+    subcomponentKey = ''
+  ) => {
+    let fullPath = getFullKey(
+      segmentKey,
+      fieldKey,
+      componentKey,
+      subcomponentKey
+    )
+    setSelectedFieldPath(fullPath)
+
+    console.log('setSelecF: ', selectedFieldPath)
+
+    // Initialize available validation types for this specific field/component/subcomponent
+    setAvailableValidationTypes(prev => ({
+      ...prev,
+      [fullPath]: prev[fullPath] || ['Max Length', 'Regex']
+    }))
+
+    setIsValModalOpen(true) // Open modal
+  }
+
+  const handleSaveValidation = () => {
+    if (!validationValue && !trimWhitespace) {
+      alert('Please enter a value for validation.')
+      return
+    }
+
+    setFieldValidations(prev => ({
+      ...prev,
+      [selectedFieldPath]: [
+        ...(prev[selectedFieldPath] || []).filter(
+          rule => !(rule.trim === true)
+        ), // Remove trim:true if unchecked
+        ...(validationValue
+          ? [{ validationType, operator, value: validationValue }]
+          : []),
+        ...(trimWhitespace[selectedFieldPath] ? [{ trim: true }] : []) // Add trim only if checked
+      ]
+    }))
+
+    // Reset trimWhitespace state for the field
+    setTrimWhitespace(prev => ({
+      ...prev,
+      [selectedFieldPath]: false
+    }))
+
+    // Remove selected validation type from available options for this specific field/component/subcomponent
+    setAvailableValidationTypes(prev => ({
+      ...prev,
+      [selectedFieldPath]: prev[selectedFieldPath].filter(
+        type => type !== validationType
+      )
+    }))
+
+    // Reset input fields
+    setValidationType(availableValidationTypes[selectedFieldPath]?.[0] || '')
+    setOperator('<')
+    setValidationValue('')
+
+    console.log('fieldValidations: ', fieldValidations)
+
+    setIsValModalOpen(false) // Close modal
+  }
+
+  const handleDeleteValidation = (fullPath, validationType) => {
+    setFieldValidations(prev => ({
+      ...prev,
+      [fullPath]: prev[fullPath].filter(
+        rule => rule.validationType !== validationType
+      )
+    }))
+
+    // Restore the deleted validation type back to the dropdown for this specific field/component/subcomponent
+    setAvailableValidationTypes(prev => ({
+      ...prev,
+      [fullPath]: [...(prev[fullPath] || []), validationType]
     }))
   }
 
@@ -834,7 +938,7 @@ const HL7MappingTool = () => {
   const handleValueChange = (segmentKey, fieldKey, value) => {
     console.log('value: ', value)
 
-    const trimmedValue = value.trim()
+    const trimmedValue = value
     // const [segmentKey, ...fieldPathParts] = path.split('.')
     // const fieldPath = fieldPathParts.join('.')
 
@@ -1284,6 +1388,8 @@ const HL7MappingTool = () => {
         }
       }
 
+      console.log('fieldValidation: ', fieldValidations)
+
       // await new Promise(resolve => setTimeout(resolve, 100))
 
       // setTimeout(async () => {
@@ -1328,6 +1434,7 @@ const HL7MappingTool = () => {
         'validToggleValidation: ',
         validToggleValidation
       )
+      console.log('fieldValidations: in Handle next ', fieldValidations)
 
       console.log('Consolidated Mapped Values:', allMappedValues)
 
@@ -1360,7 +1467,43 @@ const HL7MappingTool = () => {
 
       setIsLoading(true)
 
-      // Consolidate mapped values from segmentData
+      const transformFieldValidations = fieldValidations => {
+        return Object.entries(fieldValidations).reduce((acc, [key, rules]) => {
+          if (!key || !rules.length) return acc // Skip empty values
+
+          const mappedValue = allMappedValues[key]
+
+          if (!mappedValue) return acc
+
+          if (!isNaN(mappedValue)) {
+            acc[mappedValue] = rules
+            return acc
+          }
+
+          // Otherwise, construct the correct JSON path
+          const valueParts = mappedValue.split('.')
+          let msgPath = ''
+
+          if (valueParts.length === 1) {
+            // If there's only one part, use the part directly
+            msgPath = valueParts[0]
+          } else {
+            valueParts.forEach(part => {
+              if (!isNaN(part)) {
+                // Numeric part as array index
+                msgPath += `[${part}]`
+              } else {
+                // String part as object property
+                msgPath += `['${part}']`
+              }
+            })
+          }
+          // Store the transformed validation at the correct path
+          acc[msgPath] = rules
+
+          return acc
+        }, {})
+      }
 
       const transformedMappedValues = Object.entries(allMappedValues).reduce(
         (acc, [key, value]) => {
@@ -1476,11 +1619,23 @@ const HL7MappingTool = () => {
 
       console.log('Transformed Toggle Validation:', transformedToggleValidation)
 
+      const transformedFieldValidations =
+        transformFieldValidations(fieldValidations)
+      console.log(
+        'Transformed transformedFieldValidations:',
+        transformedFieldValidations
+      )
+
+      console.log('...Transformed Mapped Values:', {
+        ...transformedMappedValues
+      })
+
       const payload = {
         user: JSON.parse(sessionStorage.getItem('user')),
         selectedType,
-        mappings: transformedMappedValues,
-        toggleValidation: transformedToggleValidation
+        mappings: { ...transformedMappedValues },
+        toggleValidation: transformedToggleValidation,
+        fieldValidations: transformedFieldValidations
       }
 
       console.log('Publishing Data:', payload)
@@ -1518,60 +1673,57 @@ const HL7MappingTool = () => {
 
   return (
     <div className='hl7-mapping-tool'>
-      <div className='controls'>
-        {step === 1 && (
+      {/* <div className='controls'> */}
+      {step === 1 && (
+        <div className='step-container hl7-container'>
+          <h1>Select HL7 Message Type</h1>
+          <select
+            onChange={handleMessageTypeChange}
+            value={selectedMessageType}
+            className='message-type-select'
+          >
+            <option value=''>Select a message type</option>
+            <option value='ORU_R01'>ORU_R01</option>
+            <option value='SIU_S12'>SIU_S12</option>
+            <option value='ORM_O01'>ORM_O01</option>
+            <option value='ADT_A01'>ADT_A01</option>
+            <option value='ADT_A02'>ADT_A02</option>
+          </select>
+          <button className='next-button' onClick={handleNextStep}>
+            Next
+          </button>
+          {error && <p className='error-message'>{error}</p>}
+        </div>
+      )}
+      {isLoading ? (
+        <div className='spinner-container'>
+          <Rings color='#007bff' height={80} width={80} />
+          <p>Loading data, please wait...</p>
+        </div>
+      ) : (
+        step === 2 && (
           <div className='step-container hl7-container'>
-            <h1>Select HL7 Message Type</h1>
-            <select
-              onChange={handleMessageTypeChange}
-              value={selectedMessageType}
-              className='message-type-select'
-            >
-              <option value=''>Select a message type</option>
-              <option value='ORU_R01'>ORU_R01</option>
-              <option value='SIU_S12'>SIU_S12</option>
-              <option value='ORM_O01'>ORM_O01</option>
-              <option value='ADT_A01'>ADT_A01</option>
-              <option value='ADT_A02'>ADT_A02</option>
-            </select>
-            <button className='next-button' onClick={handleNextStep}>
-              Next
-            </button>
+            <h1>Upload JSON</h1>
+            <input
+              type='file'
+              accept='.json'
+              onChange={handleFileUpload}
+              className='upload-json'
+            />
+
+            <div>
+              <button className='next-button nb2' onClick={handlePreviousStep}>
+                Back
+              </button>
+              <button className='next-button nb2' onClick={handleNextStep}>
+                Next
+              </button>
+            </div>
             {error && <p className='error-message'>{error}</p>}
           </div>
-        )}
-        {isLoading ? (
-          <div className='spinner-container'>
-            <Rings color='#007bff' height={80} width={80} />
-            <p>Loading data, please wait...</p>
-          </div>
-        ) : (
-          step === 2 && (
-            <div className='step-container hl7-container'>
-              <h1>Upload JSON</h1>
-              <input
-                type='file'
-                accept='.json'
-                onChange={handleFileUpload}
-                className='upload-json'
-              />
-
-              <div>
-                <button
-                  className='next-button nb2'
-                  onClick={handlePreviousStep}
-                >
-                  Back
-                </button>
-                <button className='next-button nb2' onClick={handleNextStep}>
-                  Next
-                </button>
-              </div>
-              {error && <p className='error-message'>{error}</p>}
-            </div>
-          )
-        )}
-      </div>
+        )
+      )}
+      {/* </div> */}
       {/* <div className='file-upload'>
         <label htmlFor='fileUpload'>Upload JSON File:</label>
         <input
@@ -1952,6 +2104,16 @@ const HL7MappingTool = () => {
                                       )}
                                     </div>
                                   )}
+                                  {!hasComponents && (
+                                    <button
+                                      className='add-val-btn'
+                                      onClick={() =>
+                                        handleAddValue(segmentKey, field.key)
+                                      }
+                                    >
+                                      Add Val
+                                    </button>
+                                  )}
 
                                   {addedFromOptional.has(
                                     getFieldKey(segmentKey, field.key)
@@ -2201,6 +2363,21 @@ const HL7MappingTool = () => {
                                             </div>
                                           )}
 
+                                          {!hasSubcomponents && (
+                                            <button
+                                              className='add-val-btn'
+                                              onClick={() =>
+                                                handleAddValue(
+                                                  segmentKey,
+                                                  field.key,
+                                                  component.component_position
+                                                )
+                                              }
+                                            >
+                                              Add Val
+                                            </button>
+                                          )}
+
                                           {/* Render Subcomponents */}
                                           {isComponentExpanded &&
                                             hasSubcomponents && (
@@ -2446,6 +2623,19 @@ const HL7MappingTool = () => {
                                                             <span className='slider'></span>
                                                           </label>
                                                         </div>
+                                                        <button
+                                                          className='add-val-btn'
+                                                          onClick={() =>
+                                                            handleAddValue(
+                                                              segmentKey,
+                                                              field.key,
+                                                              component.component_position,
+                                                              subcomponent.subcomponent_position
+                                                            )
+                                                          }
+                                                        >
+                                                          Add Val
+                                                        </button>
                                                       </div>
                                                     )
                                                   }
@@ -2521,6 +2711,25 @@ const HL7MappingTool = () => {
           </div>
         </div>
       )}
+      <ValModal
+        isOpen={isValModalOpen}
+        onClose={() => setIsValModalOpen(false)}
+        validationType={validationType}
+        setValidationType={setValidationType}
+        availableValidationTypes={
+          availableValidationTypes[selectedFieldPath] || []
+        }
+        operator={operator}
+        setOperator={setOperator}
+        validationValue={validationValue}
+        setValidationValue={setValidationValue}
+        onSave={handleSaveValidation}
+        fieldValidations={fieldValidations}
+        selectedFieldPath={selectedFieldPath}
+        handleDeleteValidation={handleDeleteValidation}
+        trimWhitespace={trimWhitespace}
+        setTrimWhitespace={setTrimWhitespace}
+      />
     </div>
   )
 }

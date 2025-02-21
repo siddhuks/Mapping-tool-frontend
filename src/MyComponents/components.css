@@ -883,3 +883,23 @@ switch-button.active {
     /* Space between buttons */
     margin-top: 10px;
 }
+
+.add-val {
+    justify-content: center;
+    align-items: center;
+}
+
+.add-val-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.add-val-btn:hover {
+    background-color: #45a049;
+}

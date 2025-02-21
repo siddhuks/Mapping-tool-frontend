@@ -1,0 +1,215 @@
+.val-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.val-modal {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 400px;
+    /* Increased width */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.val-modal h2 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.val-modal label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 600;
+    color: #333;
+}
+
+.val-modal select,
+.val-modal input {
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.val-modal input {
+    width: 86%
+}
+
+.val-modal select {
+    cursor: pointer;
+    background-color: #f9f9f9;
+}
+
+
+/* Style the checkbox */
+
+
+/* Align checkbox and label in a row */
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Space between checkbox and label */
+    margin-top: 12px;
+}
+
+
+/* Bigger and properly aligned checkbox */
+
+.checkbox-container input[type="checkbox"] {
+    appearance: none;
+    width: 22px;
+    /* Increased size */
+    height: 22px;
+    /* Increased size */
+    border: 2px solid #4CAF50;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+
+/* Checked state */
+
+.checkbox-container input[type="checkbox"]:checked {
+    background-color: #4CAF50;
+    border: 2px solid #4CAF50;
+}
+
+
+/* Checkmark inside checkbox */
+
+.checkbox-container input[type="checkbox"]::after {
+    content: "✔";
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.checkbox-container input[type="checkbox"]:checked::after {
+    display: block;
+}
+
+
+/* Style label */
+
+.checkbox-container label {
+    font-weight: 500;
+    font-size: 16px;
+    /* Bigger font */
+    color: #444;
+    cursor: pointer;
+}
+
+
+/* Validation rules list */
+
+.validation-rules {
+    background: #f8f8f8;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.validation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 6px 8px;
+    margin-top: 6px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.validation-item span {
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+}
+
+.delete-validation {
+    background: none;
+    border: none;
+    color: red;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.delete-validation:hover {
+    transform: scale(1.2);
+}
+
+
+/* Modal Footer Buttons */
+
+.val-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.val-modal-save {
+    background: #4caf50;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.val-modal-save:hover {
+    background: #45a049;
+}
+
+.val-modal-cancel {
+    background: #f44336;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.val-modal-cancel:hover {
+    background: #d32f2f;
+}

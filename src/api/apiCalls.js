@@ -51,7 +51,25 @@ async function uploadJSON(file) {
 
 async function createMappingData(body) {
     try {
-        const response = await instance.post("api/mirth/create-channel", body);
+        // const response = await instance.post("api/mirth/create-channel", body);
+        // return response.data;
+
+        const mappingsArray = [];
+        for (const key in body.mappings) {
+            if (Object.prototype.hasOwnProperty.call(body.mappings, key)) {
+                // console.log("body.mappings[key]: ", key, ":", body.mappings[key])
+                mappingsArray.push({ key, value: body.mappings[key] });
+            }
+        }
+
+        console.log("Mappings Array Sent to Backend (Preserving Order):", mappingsArray);
+
+        // Send mappings as an array
+        const response = await instance.post("api/mirth/create-channel", {
+            ...body,
+            mappings: mappingsArray, // Sending as an ordered array
+        });
+
         return response.data;
     } catch (e) {
         // console.error("Error creating channel:", e);
