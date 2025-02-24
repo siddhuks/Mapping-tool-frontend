@@ -5,7 +5,6 @@ import api from '../../api/apiCalls'
 import '../alerts/alerts.css'
 import { useNavigate } from 'react-router-dom'
 import Arrrowback from '../../assets/arrow_back.png'
-import Spinner from 'react-spinner-material'
 
 const UploadAndSendPage = () => {
   const [jsonFile, setJsonFile] = useState(null)
