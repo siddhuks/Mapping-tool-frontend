@@ -20,6 +20,7 @@ const HL7MappingTool = () => {
   const [step, setStep] = useState(1)
   const [selectedMessageType, setSelectedMessageType] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingCreateChannel, setIsLoadingCreateChannel] = useState(false)
   const [selectedSegment, setSelectedSegment] = useState(null)
   const [segmentStatus, setSegmentStatus] = useState({})
   const [requiredFields, setRequiredFields] = useState([])
@@ -1465,7 +1466,7 @@ const HL7MappingTool = () => {
         return
       }
 
-      setIsLoading(true)
+      setIsLoadingCreateChannel(true)
 
       const transformFieldValidations = fieldValidations => {
         return Object.entries(fieldValidations).reduce((acc, [key, rules]) => {
@@ -1655,7 +1656,7 @@ const HL7MappingTool = () => {
         return () => clearTimeout(timeoutId)
       }
 
-      alert('Channel created successfully!')
+      // alert('Channel created successfully!')
       navigate('/alerts', {
         state: {
           channelId: response.channelId,
@@ -1667,7 +1668,7 @@ const HL7MappingTool = () => {
       console.error('Error publishing data:', error.message)
       alert(`Failed to create channel. Error: ${error.message}`)
     } finally {
-      setIsLoading(false)
+      setIsLoadingCreateChannel(false)
     }
   }
 
@@ -1683,11 +1684,23 @@ const HL7MappingTool = () => {
             className='message-type-select'
           >
             <option value=''>Select a message type</option>
-            <option value='ORU_R01'>ORU_R01</option>
-            <option value='SIU_S12'>SIU_S12</option>
-            <option value='ORM_O01'>ORM_O01</option>
             <option value='ADT_A01'>ADT_A01</option>
             <option value='ADT_A02'>ADT_A02</option>
+            <option value='ADT_A03'>ADT_A03</option>
+            <option value='ADT_A04'>ADT_A04</option>
+            <option value='ADT_A05'>ADT_A05</option>
+            <option value='ADT_A08'>ADT_A08</option>
+            <option value='ADT_A11'>ADT_A11</option>
+            <option value='ADT_A12'>ADT_A12</option>
+            <option value='ADT_A13'>ADT_A13</option>
+            <option value='ADT_A31'>ADT_A31</option>
+            <option value='ORM_O01'>ORM_O01</option>
+            <option value='SIU_S12'>SIU_S12</option>
+            <option value='SIU_S13'>SIU_S13</option>
+            <option value='SIU_S14'>SIU_S14</option>
+            <option value='SIU_S15'>SIU_S15</option>
+            <option value='SIU_S26'>SIU_S26</option>
+            <option value='ORU_R01'>ORU_R01</option>
           </select>
           <button className='next-button' onClick={handleNextStep}>
             Next
@@ -1739,6 +1752,7 @@ const HL7MappingTool = () => {
             <span className='message-type'>
               Message Type: {selectedMessageType}
             </span>
+            <span className='message-type'></span>
           </div>
           <div className='toggle-note'>
             <span className='toggle-description'>
@@ -1748,453 +1762,219 @@ const HL7MappingTool = () => {
             </span>
           </div>
 
-          {/* Sidebar and Main Content */}
-          <div className='hl7-tool-container'>
-            {/* Sidebar */}
-            <div className='sidebar'>
-              {Object.keys(data).map(segmentName => (
-                <div
-                  key={segmentName}
-                  className={`sidebar-item ${
-                    selectedSegment === segmentName ? 'active' : ''
-                  } ${segmentStatus[segmentName] ? 'has-values' : ''}`}
-                  onClick={() => handleSegmentClick(segmentName)}
-                >
-                  {segmentName}
-                  {repeatedSegments[segmentName] > 1 && (
-                    <span className='segment-count'>
-                      {' '}
-                      ({repeatedSegments[segmentName]})
-                    </span>
-                  )}
-                </div>
-              ))}
+          {isLoadingCreateChannel ? (
+            <div className='spinner-container'>
+              <Rings color='#007bff' height={80} width={80} />
+              <p>Creating Channel...</p>
             </div>
-            {/* Main Content */}
-            <div className='main-content'>
-              {Object.keys(segmentData)
-                .filter(key => key.startsWith(selectedSegment))
-                .map(segmentKey => {
-                  const dropdownFields =
-                    segmentData[segmentKey]?.optionalFields || []
+          ) : (
+            <div className='hl7-tool-container'>
+              {/* Sidebar */}
+              <div className='sidebar'>
+                {Object.keys(data).map(segmentName => (
+                  <div
+                    key={segmentName}
+                    className={`sidebar-item ${
+                      selectedSegment === segmentName ? 'active' : ''
+                    } ${segmentStatus[segmentName] ? 'has-values' : ''}`}
+                    onClick={() => handleSegmentClick(segmentName)}
+                  >
+                    {segmentName}
+                    {repeatedSegments[segmentName] > 1 && (
+                      <span className='segment-count'>
+                        {' '}
+                        ({repeatedSegments[segmentName]})
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* Main Content */}
+              <div className='main-content'>
+                {Object.keys(segmentData)
+                  .filter(key => key.startsWith(selectedSegment))
+                  .map(segmentKey => {
+                    const dropdownFields =
+                      segmentData[segmentKey]?.optionalFields || []
 
-                  return (
-                    <div className='segment' key={segmentKey}>
-                      {/* Segment Header */}
-                      <div className='segment-header'>
-                        <h2>{segmentKey}</h2>
-                        <p>
-                          {data[selectedSegment]?.description ||
-                            'No description available.'}
-                        </p>
-                      </div>
-                      {/* Optional Fields */}
-                      <div className='optional-fields'>
-                        <h4>Add Optional Fields:</h4>
-                        <select
-                          className='json-key-dropdown'
-                          onChange={e => {
-                            const selectedKey = e.target.value.trim()
-                            if (selectedKey) {
-                              const selectedField = dropdownFields.find(
-                                f => f.key === selectedKey
-                              )
-                              console.log('Dropdown fields:', dropdownFields)
+                    return (
+                      <div className='segment' key={segmentKey}>
+                        {/* Segment Header */}
+                        <div className='segment-header'>
+                          <h2>{segmentKey}</h2>
+                          <p>
+                            {data[selectedSegment]?.description ||
+                              'No description available.'}
+                          </p>
+                        </div>
+                        {/* Optional Fields */}
+                        <div className='optional-fields'>
+                          <h4>Add Optional Fields:</h4>
+                          <select
+                            className='json-key-dropdown'
+                            onChange={e => {
+                              const selectedKey = e.target.value.trim()
+                              if (selectedKey) {
+                                const selectedField = dropdownFields.find(
+                                  f => f.key === selectedKey
+                                )
+                                console.log('Dropdown fields:', dropdownFields)
 
-                              if (selectedField) {
-                                addOptionalField(selectedField, segmentKey)
+                                if (selectedField) {
+                                  addOptionalField(selectedField, segmentKey)
 
-                                updateSegmentStatus(segmentKey, selectedKey)
+                                  updateSegmentStatus(segmentKey, selectedKey)
+                                }
                               }
-                            }
-                          }}
-                        >
-                          <option value=''>Select an optional field</option>
-                          {dropdownFields && dropdownFields.length > 0 ? (
-                            // Sort the optional fields dynamically before rendering
-                            dropdownFields
+                            }}
+                          >
+                            <option value=''>Select an optional field</option>
+                            {dropdownFields && dropdownFields.length > 0 ? (
+                              // Sort the optional fields dynamically before rendering
+                              dropdownFields
 
-                              .slice() // Create a copy to avoid mutating the original state
-                              .sort(
-                                (a, b) =>
-                                  parseInt(a.key, 10) - parseInt(b.key, 10)
-                              )
-                              .map(field => (
-                                <option key={field.key} value={field.key}>
-                                  {field.key}. {field.field_name}
-                                </option>
-                              ))
-                          ) : (
-                            <option disabled>
-                              No optional fields available
-                            </option>
-                          )}
-                        </select>
-                      </div>
-                      {/* Required Fields */}
-                      <div className='segment-content'>
-                        {Array.isArray(
-                          segmentData[segmentKey]?.requiredFields
-                        ) &&
-                        segmentData[segmentKey]?.requiredFields.length > 0 ? (
-                          segmentData[segmentKey]?.requiredFields.map(field => {
-                            const fieldPath = `${segmentKey}.${field.key}`
+                                .slice() // Create a copy to avoid mutating the original state
+                                .sort(
+                                  (a, b) =>
+                                    parseInt(a.key, 10) - parseInt(b.key, 10)
+                                )
+                                .map(field => (
+                                  <option key={field.key} value={field.key}>
+                                    {field.key}. {field.field_name}
+                                  </option>
+                                ))
+                            ) : (
+                              <option disabled>
+                                No optional fields available
+                              </option>
+                            )}
+                          </select>
+                        </div>
+                        {/* Required Fields */}
+                        <div className='segment-content'>
+                          {Array.isArray(
+                            segmentData[segmentKey]?.requiredFields
+                          ) &&
+                          segmentData[segmentKey]?.requiredFields.length > 0 ? (
+                            segmentData[segmentKey]?.requiredFields.map(
+                              field => {
+                                const fieldPath = `${segmentKey}.${field.key}`
 
-                            const isFieldExpanded = expandedFields[fieldPath]
-                            const hasComponents =
-                              Array.isArray(field?.components) &&
-                              field.components.length > 0
+                                const isFieldExpanded =
+                                  expandedFields[fieldPath]
+                                const hasComponents =
+                                  Array.isArray(field?.components) &&
+                                  field.components.length > 0
 
-                            return (
-                              <div className='field' key={field.key}>
-                                <div
-                                  className='field-row'
-                                  onClick={() =>
-                                    hasComponents && toggleField(fieldPath)
-                                  }
-                                >
-                                  <div className='field-header'>
-                                    {field.key}. {field.field_name} (
-                                    {field.data_type}){' '}
-                                    {hasComponents && (
-                                      <span className='chevron'>
-                                        {isFieldExpanded ? '▲' : '▼'}
-                                      </span>
-                                    )}
-                                  </div>
+                                return (
+                                  <div className='field' key={field.key}>
+                                    <div
+                                      className='field-row'
+                                      onClick={() =>
+                                        hasComponents && toggleField(fieldPath)
+                                      }
+                                    >
+                                      <div className='field-header'>
+                                        {field.key}. {field.field_name} (
+                                        {field.data_type}){' '}
+                                        {hasComponents && (
+                                          <span className='chevron'>
+                                            {isFieldExpanded ? '▲' : '▼'}
+                                          </span>
+                                        )}
+                                      </div>
 
-                                  {!hasComponents && (
-                                    <div>
-                                      {field.field_name ===
-                                        'Encoding Characters' &&
-                                      field.data_type === 'ST' ? (
-                                        // Fixed Dropdown for Encoding Characters
-                                        <select
-                                          className='json-key-dropdown'
-                                          value={
-                                            mappedValues[fieldPath] || '^~\\&'
-                                          } // Default to ^~\&
-                                          onChange={e => {
-                                            const value = e.target.value.trim()
-                                            console.log(
-                                              'value in dropdown: ',
-                                              value
-                                            )
-                                            setMappedValues(prev => ({
-                                              ...prev,
-                                              [fieldPath]: value
-                                            }))
-
-                                            console.log(
-                                              'mappedvalues : ',
-                                              mappedValues
-                                            )
-                                            updateSegmentStatus(
-                                              segmentKey,
-                                              value
-                                            ) // Update status for Encoding Characters
-                                          }}
-                                        >
-                                          <option value='^~\\&'>^~\&</option>
-                                          <option value='^~\\&#'>^~\&#</option>
-                                        </select>
-                                      ) : (
-                                        // Regular Input Logic for Other Fields
-                                        <>
-                                          <div className='input-switcher'>
-                                            <button
-                                              className={`switch-button ${
-                                                inputMode[fieldPath] ===
-                                                'dropdown'
-                                                  ? 'active'
-                                                  : ''
-                                              }`}
-                                              onClick={() => {
-                                                setInputMode(prev => ({
-                                                  ...prev,
-                                                  [fieldPath]: 'dropdown'
-                                                }))
-                                                setMappedValues(prev => ({
-                                                  ...prev,
-                                                  [fieldPath]: '' // Clear the value
-                                                }))
-                                                // setSegmentData(prevSegmentData => ({
-                                                //   ...prevSegmentData,
-                                                //   [selectedSegment]: {
-                                                //     ...prevSegmentData[
-                                                //       selectedSegment
-                                                //     ],
-                                                //     mappedValues: {
-                                                //       ...prevSegmentData[
-                                                //         selectedSegment
-                                                //       ]?.mappedValues,
-                                                //       [fieldPath]: '' // Clear the value in segment data
-                                                //     },
-                                                //     inputMode: {
-                                                //       ...prevSegmentData[
-                                                //         selectedSegment
-                                                //       ]?.inputMode,
-                                                //       [fieldPath]: 'dropdown' // Explicitly set the input mode
-                                                //     }
-                                                //   }
-                                                // }))
-                                              }}
-                                            >
-                                              Use Dropdown
-                                            </button>
-                                            {field.data_type === 'DT' ||
-                                            field.data_type === 'DTM' ? (
-                                              <button
-                                                className={`switch-button ${
-                                                  inputMode[fieldPath] ===
-                                                  'serverTime'
-                                                    ? 'active'
-                                                    : ''
-                                                }`}
-                                                onClick={() => {
-                                                  const serverTime =
-                                                    'serverTime'
-                                                  setMappedValues(prev => ({
-                                                    ...prev,
-                                                    [fieldPath]: serverTime
-                                                  }))
-                                                  setInputMode(prev => ({
-                                                    ...prev,
-                                                    [fieldPath]: 'serverTime'
-                                                  }))
-                                                  updateSegmentStatus(
-                                                    segmentKey,
-                                                    serverTime
-                                                  ) // Update status for Server Time
-                                                }}
-                                              >
-                                                Use Server Time
-                                              </button>
-                                            ) : (
-                                              <button
-                                                className={`switch-button ${
-                                                  inputMode[fieldPath] ===
-                                                  'textbox'
-                                                    ? 'active'
-                                                    : ''
-                                                }`}
-                                                onClick={() =>
-                                                  switchToTextbox(fieldPath)
-                                                }
-                                              >
-                                                Use Textbox
-                                              </button>
-                                            )}
-                                          </div>
-                                          {inputMode[fieldPath] ===
-                                            'dropdown' && (
+                                      {!hasComponents && (
+                                        <div>
+                                          {field.field_name ===
+                                            'Encoding Characters' &&
+                                          field.data_type === 'ST' ? (
+                                            // Fixed Dropdown for Encoding Characters
                                             <select
                                               className='json-key-dropdown'
                                               value={
-                                                mappedValues[
-                                                  getFieldKey(
-                                                    segmentKey,
-                                                    field.key
-                                                  )
-                                                ] || ''
-                                              }
+                                                mappedValues[fieldPath] ||
+                                                '^~\\&'
+                                              } // Default to ^~\&
                                               onChange={e => {
                                                 const value =
                                                   e.target.value.trim()
-                                                console.log('svalue: ', value)
-
                                                 console.log(
-                                                  'segmentKey in dropdown: ',
-                                                  segmentKey,
-                                                  field.key
+                                                  'value in dropdown: ',
+                                                  value
                                                 )
-
-                                                const fieldKey = getFieldKey(
-                                                  segmentKey,
-                                                  field.key
-                                                )
-
-                                                console.log(
-                                                  'fieldKey in json-dropdown: ',
-                                                  fieldKey
-                                                )
-
                                                 setMappedValues(prev => ({
                                                   ...prev,
-                                                  [fieldKey]: value
+                                                  [fieldPath]: value
                                                 }))
 
                                                 console.log(
-                                                  'mappedvalues F: ',
+                                                  'mappedvalues : ',
                                                   mappedValues
                                                 )
-
                                                 updateSegmentStatus(
                                                   segmentKey,
                                                   value
-                                                ) // Update status for dropdown change
+                                                ) // Update status for Encoding Characters
                                               }}
-                                              tabIndex={-1}
                                             >
-                                              <option value=''>
-                                                Select JSON key
+                                              <option value='^~\\&'>
+                                                ^~\&
                                               </option>
-                                              {jsonKeys.map((key, i) => (
-                                                <option key={i} value={key}>
-                                                  {key}
-                                                </option>
-                                              ))}
+                                              <option value='^~\\&#'>
+                                                ^~\&#
+                                              </option>
                                             </select>
-                                          )}
-                                          {inputMode[fieldPath] ===
-                                            'textbox' && (
-                                            <input
-                                              type='text'
-                                              className='field-textbox'
-                                              value={
-                                                mappedValues[
-                                                  getFieldKey(
-                                                    segmentKey,
-                                                    field.key
-                                                  )
-                                                ] || ''
-                                              }
-                                              onChange={e =>
-                                                handleValueChange(
-                                                  segmentKey,
-                                                  field.key,
-                                                  e.target.value
-                                                )
-                                              }
-                                            />
-                                          )}
-                                          {inputMode[fieldPath] ===
-                                            'serverTime' && (
-                                            <input
-                                              type='text'
-                                              className='field-textbox'
-                                              value={
-                                                mappedValues[fieldPath] || ''
-                                              }
-                                              disabled
-                                              placeholder='Server Time'
-                                            />
-                                          )}
-                                          <label className='toggle-switch'>
-                                            <input
-                                              type='checkbox'
-                                              onChange={() =>
-                                                handleToggleChange(
-                                                  segmentKey,
-                                                  field.key
-                                                )
-                                              }
-                                              checked={
-                                                toggleValidation[
-                                                  getFieldKey(
-                                                    segmentKey,
-                                                    field.key
-                                                  )
-                                                ]?.isToggleOn || false
-                                              }
-                                            />
-                                            <span className='slider'></span>
-                                          </label>
-                                        </>
-                                      )}
-                                    </div>
-                                  )}
-                                  {!hasComponents && (
-                                    <button
-                                      className='add-val-btn'
-                                      onClick={() =>
-                                        handleAddValue(segmentKey, field.key)
-                                      }
-                                    >
-                                      Add Val
-                                    </button>
-                                  )}
-
-                                  {addedFromOptional.has(
-                                    getFieldKey(segmentKey, field.key)
-                                  ) && (
-                                    <div className='actions'>
-                                      <FaTrash
-                                        className='delete-icon'
-                                        onClick={() =>
-                                          deleteField(field.key, segmentKey)
-                                        }
-                                      />
-                                    </div>
-                                  )}
-                                </div>
-
-                                {/* Render Components */}
-                                {isFieldExpanded && hasComponents && (
-                                  <div className='component-list'>
-                                    {field.components.map(component => {
-                                      const componentPath = `${fieldPath}.${component.component_position}`
-                                      const componentKey = `${field.key}.${component.component_position}`
-
-                                      const isComponentExpanded =
-                                        expandedComponents[componentPath]
-                                      const hasSubcomponents =
-                                        Array.isArray(
-                                          component.subcomponents
-                                        ) && component.subcomponents.length > 0
-
-                                      return (
-                                        <div
-                                          className='component-row'
-                                          key={componentPath}
-                                        >
-                                          <div
-                                            className='component-header'
-                                            onClick={() =>
-                                              hasSubcomponents &&
-                                              toggleComponent(componentPath)
-                                            }
-                                          >
-                                            {component.component_position}.{' '}
-                                            {component.component_name} (
-                                            {component.data_type}){' '}
-                                            {hasSubcomponents && (
-                                              <span className='chevron'>
-                                                {isComponentExpanded
-                                                  ? '▲'
-                                                  : '▼'}
-                                              </span>
-                                            )}
-                                          </div>
-                                          {!hasSubcomponents && (
-                                            <div className='input-container'>
-                                              {/* Input Switcher */}
+                                          ) : (
+                                            // Regular Input Logic for Other Fields
+                                            <>
                                               <div className='input-switcher'>
                                                 <button
                                                   className={`switch-button ${
-                                                    inputMode[componentPath] ===
+                                                    inputMode[fieldPath] ===
                                                     'dropdown'
                                                       ? 'active'
                                                       : ''
                                                   }`}
-                                                  onClick={() =>
+                                                  onClick={() => {
                                                     setInputMode(prev => ({
                                                       ...prev,
-                                                      [componentPath]:
-                                                        'dropdown'
+                                                      [fieldPath]: 'dropdown'
                                                     }))
-                                                  }
+                                                    setMappedValues(prev => ({
+                                                      ...prev,
+                                                      [fieldPath]: '' // Clear the value
+                                                    }))
+                                                    // setSegmentData(prevSegmentData => ({
+                                                    //   ...prevSegmentData,
+                                                    //   [selectedSegment]: {
+                                                    //     ...prevSegmentData[
+                                                    //       selectedSegment
+                                                    //     ],
+                                                    //     mappedValues: {
+                                                    //       ...prevSegmentData[
+                                                    //         selectedSegment
+                                                    //       ]?.mappedValues,
+                                                    //       [fieldPath]: '' // Clear the value in segment data
+                                                    //     },
+                                                    //     inputMode: {
+                                                    //       ...prevSegmentData[
+                                                    //         selectedSegment
+                                                    //       ]?.inputMode,
+                                                    //       [fieldPath]: 'dropdown' // Explicitly set the input mode
+                                                    //     }
+                                                    //   }
+                                                    // }))
+                                                  }}
                                                 >
                                                   Use Dropdown
                                                 </button>
-                                                {component.data_type === 'DT' ||
-                                                component.data_type ===
-                                                  'DTM' ? (
+                                                {field.data_type === 'DT' ||
+                                                field.data_type === 'DTM' ? (
                                                   <button
                                                     className={`switch-button ${
-                                                      inputMode[
-                                                        componentPath
-                                                      ] === 'serverTime'
+                                                      inputMode[fieldPath] ===
+                                                      'serverTime'
                                                         ? 'active'
                                                         : ''
                                                     }`}
@@ -2203,12 +1983,11 @@ const HL7MappingTool = () => {
                                                         'serverTime'
                                                       setMappedValues(prev => ({
                                                         ...prev,
-                                                        [componentPath]:
-                                                          serverTime
+                                                        [fieldPath]: serverTime
                                                       }))
                                                       setInputMode(prev => ({
                                                         ...prev,
-                                                        [componentPath]:
+                                                        [fieldPath]:
                                                           'serverTime'
                                                       }))
                                                       updateSegmentStatus(
@@ -2222,25 +2001,20 @@ const HL7MappingTool = () => {
                                                 ) : (
                                                   <button
                                                     className={`switch-button ${
-                                                      inputMode[
-                                                        componentPath
-                                                      ] === 'textbox'
+                                                      inputMode[fieldPath] ===
+                                                      'textbox'
                                                         ? 'active'
                                                         : ''
                                                     }`}
                                                     onClick={() =>
-                                                      switchToTextbox(
-                                                        componentPath
-                                                      )
+                                                      switchToTextbox(fieldPath)
                                                     }
                                                   >
                                                     Use Textbox
                                                   </button>
                                                 )}
                                               </div>
-
-                                              {/* Conditional Input Rendering */}
-                                              {inputMode[componentPath] ===
+                                              {inputMode[fieldPath] ===
                                                 'dropdown' && (
                                                 <select
                                                   className='json-key-dropdown'
@@ -2248,33 +2022,42 @@ const HL7MappingTool = () => {
                                                     mappedValues[
                                                       getFieldKey(
                                                         segmentKey,
-                                                        componentKey
+                                                        field.key
                                                       )
                                                     ] || ''
                                                   }
                                                   onChange={e => {
                                                     const value =
                                                       e.target.value.trim()
+                                                    console.log(
+                                                      'svalue: ',
+                                                      value
+                                                    )
+
+                                                    console.log(
+                                                      'segmentKey in dropdown: ',
+                                                      segmentKey,
+                                                      field.key
+                                                    )
+
                                                     const fieldKey =
                                                       getFieldKey(
                                                         segmentKey,
-                                                        componentKey
+                                                        field.key
                                                       )
+
                                                     console.log(
-                                                      'value in dropdown: ',
-                                                      value
+                                                      'fieldKey in json-dropdown: ',
+                                                      fieldKey
                                                     )
 
                                                     setMappedValues(prev => ({
                                                       ...prev,
                                                       [fieldKey]: value
                                                     }))
+
                                                     console.log(
-                                                      'fieldKey: ',
-                                                      fieldKey
-                                                    )
-                                                    console.log(
-                                                      'mappedvalues C: ',
+                                                      'mappedvalues F: ',
                                                       mappedValues
                                                     )
 
@@ -2283,6 +2066,7 @@ const HL7MappingTool = () => {
                                                       value
                                                     ) // Update status for dropdown change
                                                   }}
+                                                  tabIndex={-1}
                                                 >
                                                   <option value=''>
                                                     Select JSON key
@@ -2294,377 +2078,675 @@ const HL7MappingTool = () => {
                                                   ))}
                                                 </select>
                                               )}
-
-                                              {inputMode[componentPath] ===
-                                                'textbox' &&
-                                                component.data_type !== 'DT' &&
-                                                component.data_type !==
-                                                  'DTM' && (
-                                                  <input
-                                                    type='text'
-                                                    className='component-textbox'
-                                                    value={
-                                                      mappedValues[
-                                                        getFieldKey(
-                                                          segmentKey,
-                                                          componentKey
-                                                        )
-                                                      ] || ''
-                                                    }
-                                                    onChange={e =>
-                                                      handleValueChange(
-                                                        segmentKey,
-                                                        componentKey,
-                                                        e.target.value
-                                                      )
-                                                    }
-                                                  />
-                                                )}
-
-                                              {inputMode[componentPath] ===
-                                                'serverTime' && (
+                                              {inputMode[fieldPath] ===
+                                                'textbox' && (
                                                 <input
                                                   type='text'
-                                                  className='component-textbox'
+                                                  className='field-textbox'
                                                   value={
                                                     mappedValues[
                                                       getFieldKey(
                                                         segmentKey,
-                                                        componentKey
+                                                        field.key
                                                       )
                                                     ] || ''
+                                                  }
+                                                  onChange={e =>
+                                                    handleValueChange(
+                                                      segmentKey,
+                                                      field.key,
+                                                      e.target.value
+                                                    )
+                                                  }
+                                                />
+                                              )}
+                                              {inputMode[fieldPath] ===
+                                                'serverTime' && (
+                                                <input
+                                                  type='text'
+                                                  className='field-textbox'
+                                                  value={
+                                                    mappedValues[fieldPath] ||
+                                                    ''
                                                   }
                                                   disabled
                                                   placeholder='Server Time'
                                                 />
                                               )}
-
-                                              {/* Toggle Switch */}
                                               <label className='toggle-switch'>
                                                 <input
                                                   type='checkbox'
                                                   onChange={() =>
                                                     handleToggleChange(
                                                       segmentKey,
-                                                      componentKey
+                                                      field.key
                                                     )
                                                   }
                                                   checked={
                                                     toggleValidation[
                                                       getFieldKey(
                                                         segmentKey,
-                                                        componentKey
+                                                        field.key
                                                       )
                                                     ]?.isToggleOn || false
                                                   }
                                                 />
                                                 <span className='slider'></span>
                                               </label>
-                                            </div>
+                                            </>
                                           )}
+                                        </div>
+                                      )}
+                                      {!hasComponents && (
+                                        <button
+                                          className='add-val-btn'
+                                          onClick={() =>
+                                            handleAddValue(
+                                              segmentKey,
+                                              field.key
+                                            )
+                                          }
+                                        >
+                                          Add Val
+                                        </button>
+                                      )}
 
-                                          {!hasSubcomponents && (
-                                            <button
-                                              className='add-val-btn'
-                                              onClick={() =>
-                                                handleAddValue(
-                                                  segmentKey,
-                                                  field.key,
-                                                  component.component_position
-                                                )
-                                              }
+                                      {addedFromOptional.has(
+                                        getFieldKey(segmentKey, field.key)
+                                      ) && (
+                                        <div className='actions'>
+                                          <FaTrash
+                                            className='delete-icon'
+                                            onClick={() =>
+                                              deleteField(field.key, segmentKey)
+                                            }
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {/* Render Components */}
+                                    {isFieldExpanded && hasComponents && (
+                                      <div className='component-list'>
+                                        {field.components.map(component => {
+                                          const componentPath = `${fieldPath}.${component.component_position}`
+                                          const componentKey = `${field.key}.${component.component_position}`
+
+                                          const isComponentExpanded =
+                                            expandedComponents[componentPath]
+                                          const hasSubcomponents =
+                                            Array.isArray(
+                                              component.subcomponents
+                                            ) &&
+                                            component.subcomponents.length > 0
+
+                                          return (
+                                            <div
+                                              className='component-row'
+                                              key={componentPath}
                                             >
-                                              Add Val
-                                            </button>
-                                          )}
-
-                                          {/* Render Subcomponents */}
-                                          {isComponentExpanded &&
-                                            hasSubcomponents && (
-                                              <div className='subcomponent-list'>
-                                                {component.subcomponents.map(
-                                                  subcomponent => {
-                                                    const subcomponentPath = `${componentPath}.${subcomponent.subcomponent_position}`
-                                                    const subcomponentKey = `${componentKey}.${subcomponent.subcomponent_position}`
-
-                                                    return (
-                                                      <div
-                                                        className='subcomponent-row'
-                                                        key={subcomponentPath}
-                                                      >
-                                                        <div className='subcomponent-header'>
-                                                          {
-                                                            subcomponent.subcomponent_position
-                                                          }
-                                                          .{' '}
-                                                          {
-                                                            subcomponent.subcomponent_name
-                                                          }{' '}
-                                                          (
-                                                          {
-                                                            subcomponent.data_type
-                                                          }
+                                              <div
+                                                className='component-header'
+                                                onClick={() =>
+                                                  hasSubcomponents &&
+                                                  toggleComponent(componentPath)
+                                                }
+                                              >
+                                                {component.component_position}.{' '}
+                                                {component.component_name} (
+                                                {component.data_type}){' '}
+                                                {hasSubcomponents && (
+                                                  <span className='chevron'>
+                                                    {isComponentExpanded
+                                                      ? '▲'
+                                                      : '▼'}
+                                                  </span>
+                                                )}
+                                              </div>
+                                              {!hasSubcomponents && (
+                                                <div className='input-container'>
+                                                  {/* Input Switcher */}
+                                                  <div className='input-switcher'>
+                                                    <button
+                                                      className={`switch-button ${
+                                                        inputMode[
+                                                          componentPath
+                                                        ] === 'dropdown'
+                                                          ? 'active'
+                                                          : ''
+                                                      }`}
+                                                      onClick={() =>
+                                                        setInputMode(prev => ({
+                                                          ...prev,
+                                                          [componentPath]:
+                                                            'dropdown'
+                                                        }))
+                                                      }
+                                                    >
+                                                      Use Dropdown
+                                                    </button>
+                                                    {component.data_type ===
+                                                      'DT' ||
+                                                    component.data_type ===
+                                                      'DTM' ? (
+                                                      <button
+                                                        className={`switch-button ${
+                                                          inputMode[
+                                                            componentPath
+                                                          ] === 'serverTime'
+                                                            ? 'active'
+                                                            : ''
+                                                        }`}
+                                                        onClick={() => {
+                                                          const serverTime =
+                                                            'serverTime'
+                                                          setMappedValues(
+                                                            prev => ({
+                                                              ...prev,
+                                                              [componentPath]:
+                                                                serverTime
+                                                            })
                                                           )
-                                                        </div>
-                                                        <div className='input-container'>
-                                                          {/* Input Switcher */}
-                                                          <div className='input-switcher'>
-                                                            <button
-                                                              className={`switch-button ${
-                                                                inputMode[
-                                                                  subcomponentPath
-                                                                ] === 'dropdown'
-                                                                  ? 'active'
-                                                                  : ''
-                                                              }`}
-                                                              onClick={() =>
-                                                                setInputMode(
-                                                                  prev => ({
-                                                                    ...prev,
-                                                                    [subcomponentPath]:
-                                                                      'dropdown'
-                                                                  })
-                                                                )
-                                                              }
-                                                            >
-                                                              Use Dropdown
-                                                            </button>
-                                                            {subcomponent.data_type ===
-                                                              'DT' ||
-                                                            subcomponent.data_type ===
-                                                              'DTM' ? (
-                                                              <button
-                                                                className={`switch-button ${
-                                                                  inputMode[
-                                                                    subcomponentPath
-                                                                  ] ===
-                                                                  'serverTime'
-                                                                    ? 'active'
-                                                                    : ''
-                                                                }`}
-                                                                onClick={() => {
-                                                                  const serverTime =
-                                                                    'serverTime'
+                                                          setInputMode(
+                                                            prev => ({
+                                                              ...prev,
+                                                              [componentPath]:
+                                                                'serverTime'
+                                                            })
+                                                          )
+                                                          updateSegmentStatus(
+                                                            segmentKey,
+                                                            serverTime
+                                                          ) // Update status for Server Time
+                                                        }}
+                                                      >
+                                                        Use Server Time
+                                                      </button>
+                                                    ) : (
+                                                      <button
+                                                        className={`switch-button ${
+                                                          inputMode[
+                                                            componentPath
+                                                          ] === 'textbox'
+                                                            ? 'active'
+                                                            : ''
+                                                        }`}
+                                                        onClick={() =>
+                                                          switchToTextbox(
+                                                            componentPath
+                                                          )
+                                                        }
+                                                      >
+                                                        Use Textbox
+                                                      </button>
+                                                    )}
+                                                  </div>
 
-                                                                  setMappedValues(
-                                                                    prev => ({
-                                                                      ...prev,
-                                                                      [subcomponentPath]:
-                                                                        serverTime
-                                                                    })
-                                                                  )
-                                                                  setInputMode(
-                                                                    prev => ({
-                                                                      ...prev,
-                                                                      [subcomponentPath]:
+                                                  {/* Conditional Input Rendering */}
+                                                  {inputMode[componentPath] ===
+                                                    'dropdown' && (
+                                                    <select
+                                                      className='json-key-dropdown'
+                                                      value={
+                                                        mappedValues[
+                                                          getFieldKey(
+                                                            segmentKey,
+                                                            componentKey
+                                                          )
+                                                        ] || ''
+                                                      }
+                                                      onChange={e => {
+                                                        const value =
+                                                          e.target.value.trim()
+                                                        const fieldKey =
+                                                          getFieldKey(
+                                                            segmentKey,
+                                                            componentKey
+                                                          )
+                                                        console.log(
+                                                          'value in dropdown: ',
+                                                          value
+                                                        )
+
+                                                        setMappedValues(
+                                                          prev => ({
+                                                            ...prev,
+                                                            [fieldKey]: value
+                                                          })
+                                                        )
+                                                        console.log(
+                                                          'fieldKey: ',
+                                                          fieldKey
+                                                        )
+                                                        console.log(
+                                                          'mappedvalues C: ',
+                                                          mappedValues
+                                                        )
+
+                                                        updateSegmentStatus(
+                                                          segmentKey,
+                                                          value
+                                                        ) // Update status for dropdown change
+                                                      }}
+                                                    >
+                                                      <option value=''>
+                                                        Select JSON key
+                                                      </option>
+                                                      {jsonKeys.map(
+                                                        (key, i) => (
+                                                          <option
+                                                            key={i}
+                                                            value={key}
+                                                          >
+                                                            {key}
+                                                          </option>
+                                                        )
+                                                      )}
+                                                    </select>
+                                                  )}
+
+                                                  {inputMode[componentPath] ===
+                                                    'textbox' &&
+                                                    component.data_type !==
+                                                      'DT' &&
+                                                    component.data_type !==
+                                                      'DTM' && (
+                                                      <input
+                                                        type='text'
+                                                        className='component-textbox'
+                                                        value={
+                                                          mappedValues[
+                                                            getFieldKey(
+                                                              segmentKey,
+                                                              componentKey
+                                                            )
+                                                          ] || ''
+                                                        }
+                                                        onChange={e =>
+                                                          handleValueChange(
+                                                            segmentKey,
+                                                            componentKey,
+                                                            e.target.value
+                                                          )
+                                                        }
+                                                      />
+                                                    )}
+
+                                                  {inputMode[componentPath] ===
+                                                    'serverTime' && (
+                                                    <input
+                                                      type='text'
+                                                      className='component-textbox'
+                                                      value={
+                                                        mappedValues[
+                                                          getFieldKey(
+                                                            segmentKey,
+                                                            componentKey
+                                                          )
+                                                        ] || ''
+                                                      }
+                                                      disabled
+                                                      placeholder='Server Time'
+                                                    />
+                                                  )}
+
+                                                  {/* Toggle Switch */}
+                                                  <label className='toggle-switch'>
+                                                    <input
+                                                      type='checkbox'
+                                                      onChange={() =>
+                                                        handleToggleChange(
+                                                          segmentKey,
+                                                          componentKey
+                                                        )
+                                                      }
+                                                      checked={
+                                                        toggleValidation[
+                                                          getFieldKey(
+                                                            segmentKey,
+                                                            componentKey
+                                                          )
+                                                        ]?.isToggleOn || false
+                                                      }
+                                                    />
+                                                    <span className='slider'></span>
+                                                  </label>
+                                                </div>
+                                              )}
+
+                                              {!hasSubcomponents && (
+                                                <button
+                                                  className='add-val-btn'
+                                                  onClick={() =>
+                                                    handleAddValue(
+                                                      segmentKey,
+                                                      field.key,
+                                                      component.component_position
+                                                    )
+                                                  }
+                                                >
+                                                  Add Val
+                                                </button>
+                                              )}
+
+                                              {/* Render Subcomponents */}
+                                              {isComponentExpanded &&
+                                                hasSubcomponents && (
+                                                  <div className='subcomponent-list'>
+                                                    {component.subcomponents.map(
+                                                      subcomponent => {
+                                                        const subcomponentPath = `${componentPath}.${subcomponent.subcomponent_position}`
+                                                        const subcomponentKey = `${componentKey}.${subcomponent.subcomponent_position}`
+
+                                                        return (
+                                                          <div
+                                                            className='subcomponent-row'
+                                                            key={
+                                                              subcomponentPath
+                                                            }
+                                                          >
+                                                            <div className='subcomponent-header'>
+                                                              {
+                                                                subcomponent.subcomponent_position
+                                                              }
+                                                              .{' '}
+                                                              {
+                                                                subcomponent.subcomponent_name
+                                                              }{' '}
+                                                              (
+                                                              {
+                                                                subcomponent.data_type
+                                                              }
+                                                              )
+                                                            </div>
+                                                            <div className='input-container'>
+                                                              {/* Input Switcher */}
+                                                              <div className='input-switcher'>
+                                                                <button
+                                                                  className={`switch-button ${
+                                                                    inputMode[
+                                                                      subcomponentPath
+                                                                    ] ===
+                                                                    'dropdown'
+                                                                      ? 'active'
+                                                                      : ''
+                                                                  }`}
+                                                                  onClick={() =>
+                                                                    setInputMode(
+                                                                      prev => ({
+                                                                        ...prev,
+                                                                        [subcomponentPath]:
+                                                                          'dropdown'
+                                                                      })
+                                                                    )
+                                                                  }
+                                                                >
+                                                                  Use Dropdown
+                                                                </button>
+                                                                {subcomponent.data_type ===
+                                                                  'DT' ||
+                                                                subcomponent.data_type ===
+                                                                  'DTM' ? (
+                                                                  <button
+                                                                    className={`switch-button ${
+                                                                      inputMode[
+                                                                        subcomponentPath
+                                                                      ] ===
+                                                                      'serverTime'
+                                                                        ? 'active'
+                                                                        : ''
+                                                                    }`}
+                                                                    onClick={() => {
+                                                                      const serverTime =
                                                                         'serverTime'
-                                                                    })
-                                                                  )
-                                                                  updateSegmentStatus(
-                                                                    segmentKey,
-                                                                    serverTime
-                                                                  ) // Update status for Server Time
-                                                                }}
-                                                              >
-                                                                Use Server Time
-                                                              </button>
-                                                            ) : (
-                                                              <button
-                                                                className={`switch-button ${
-                                                                  inputMode[
-                                                                    subcomponentPath
-                                                                  ] ===
-                                                                  'textbox'
-                                                                    ? 'active'
-                                                                    : ''
-                                                                }`}
-                                                                onClick={() =>
-                                                                  switchToTextbox(
-                                                                    subcomponentPath
-                                                                  )
-                                                                }
-                                                              >
-                                                                Use Textbox
-                                                              </button>
-                                                            )}
-                                                          </div>
 
-                                                          {/* Conditional Input Rendering */}
-                                                          {inputMode[
-                                                            subcomponentPath
-                                                          ] === 'dropdown' && (
-                                                            <select
-                                                              className='json-key-dropdown'
-                                                              value={
-                                                                mappedValues[
-                                                                  getFieldKey(
-                                                                    segmentKey,
-                                                                    subcomponentKey
-                                                                  )
-                                                                ] || ''
-                                                              }
-                                                              onChange={e => {
-                                                                const value =
-                                                                  e.target.value.trim()
-                                                                const fieldKey =
-                                                                  getFieldKey(
-                                                                    segmentKey,
-                                                                    subcomponentKey
-                                                                  )
-
-                                                                setMappedValues(
-                                                                  prev => ({
-                                                                    ...prev,
-                                                                    [fieldKey]:
-                                                                      value
-                                                                  })
-                                                                )
-
-                                                                console.log(
-                                                                  'fieldKey: ',
-                                                                  fieldKey
-                                                                )
-                                                                console.log(
-                                                                  'mappedvalues S: ',
-                                                                  mappedValues
-                                                                )
-
-                                                                updateSegmentStatus(
-                                                                  segmentKey,
-                                                                  value
-                                                                ) // Update status for dropdown change
-                                                              }}
-                                                            >
-                                                              <option value=''>
-                                                                Select JSON key
-                                                              </option>
-                                                              {jsonKeys.map(
-                                                                (key, i) => (
-                                                                  <option
-                                                                    key={i}
-                                                                    value={key}
+                                                                      setMappedValues(
+                                                                        prev => ({
+                                                                          ...prev,
+                                                                          [subcomponentPath]:
+                                                                            serverTime
+                                                                        })
+                                                                      )
+                                                                      setInputMode(
+                                                                        prev => ({
+                                                                          ...prev,
+                                                                          [subcomponentPath]:
+                                                                            'serverTime'
+                                                                        })
+                                                                      )
+                                                                      updateSegmentStatus(
+                                                                        segmentKey,
+                                                                        serverTime
+                                                                      ) // Update status for Server Time
+                                                                    }}
                                                                   >
-                                                                    {key}
-                                                                  </option>
-                                                                )
-                                                              )}
-                                                            </select>
-                                                          )}
+                                                                    Use Server
+                                                                    Time
+                                                                  </button>
+                                                                ) : (
+                                                                  <button
+                                                                    className={`switch-button ${
+                                                                      inputMode[
+                                                                        subcomponentPath
+                                                                      ] ===
+                                                                      'textbox'
+                                                                        ? 'active'
+                                                                        : ''
+                                                                    }`}
+                                                                    onClick={() =>
+                                                                      switchToTextbox(
+                                                                        subcomponentPath
+                                                                      )
+                                                                    }
+                                                                  >
+                                                                    Use Textbox
+                                                                  </button>
+                                                                )}
+                                                              </div>
 
-                                                          {inputMode[
-                                                            subcomponentPath
-                                                          ] === 'textbox' &&
-                                                            subcomponent.data_type !==
-                                                              'DT' &&
-                                                            subcomponent.data_type !==
-                                                              'DTM' && (
-                                                              <input
-                                                                type='text'
-                                                                className='subcomponent-textbox'
-                                                                value={
-                                                                  mappedValues[
-                                                                    getFieldKey(
+                                                              {/* Conditional Input Rendering */}
+                                                              {inputMode[
+                                                                subcomponentPath
+                                                              ] ===
+                                                                'dropdown' && (
+                                                                <select
+                                                                  className='json-key-dropdown'
+                                                                  value={
+                                                                    mappedValues[
+                                                                      getFieldKey(
+                                                                        segmentKey,
+                                                                        subcomponentKey
+                                                                      )
+                                                                    ] || ''
+                                                                  }
+                                                                  onChange={e => {
+                                                                    const value =
+                                                                      e.target.value.trim()
+                                                                    const fieldKey =
+                                                                      getFieldKey(
+                                                                        segmentKey,
+                                                                        subcomponentKey
+                                                                      )
+
+                                                                    setMappedValues(
+                                                                      prev => ({
+                                                                        ...prev,
+                                                                        [fieldKey]:
+                                                                          value
+                                                                      })
+                                                                    )
+
+                                                                    console.log(
+                                                                      'fieldKey: ',
+                                                                      fieldKey
+                                                                    )
+                                                                    console.log(
+                                                                      'mappedvalues S: ',
+                                                                      mappedValues
+                                                                    )
+
+                                                                    updateSegmentStatus(
+                                                                      segmentKey,
+                                                                      value
+                                                                    ) // Update status for dropdown change
+                                                                  }}
+                                                                >
+                                                                  <option value=''>
+                                                                    Select JSON
+                                                                    key
+                                                                  </option>
+                                                                  {jsonKeys.map(
+                                                                    (
+                                                                      key,
+                                                                      i
+                                                                    ) => (
+                                                                      <option
+                                                                        key={i}
+                                                                        value={
+                                                                          key
+                                                                        }
+                                                                      >
+                                                                        {key}
+                                                                      </option>
+                                                                    )
+                                                                  )}
+                                                                </select>
+                                                              )}
+
+                                                              {inputMode[
+                                                                subcomponentPath
+                                                              ] === 'textbox' &&
+                                                                subcomponent.data_type !==
+                                                                  'DT' &&
+                                                                subcomponent.data_type !==
+                                                                  'DTM' && (
+                                                                  <input
+                                                                    type='text'
+                                                                    className='subcomponent-textbox'
+                                                                    value={
+                                                                      mappedValues[
+                                                                        getFieldKey(
+                                                                          segmentKey,
+                                                                          subcomponentKey
+                                                                        )
+                                                                      ] || ''
+                                                                    }
+                                                                    onChange={e =>
+                                                                      handleValueChange(
+                                                                        segmentKey,
+                                                                        subcomponentKey,
+                                                                        e.target
+                                                                          .value
+                                                                      )
+                                                                    }
+                                                                  />
+                                                                )}
+
+                                                              {inputMode[
+                                                                subcomponentPath
+                                                              ] ===
+                                                                'serverTime' && (
+                                                                <input
+                                                                  type='text'
+                                                                  className='subcomponent-textbox'
+                                                                  value={
+                                                                    mappedValues[
+                                                                      getFieldKey(
+                                                                        segmentKey,
+                                                                        subcomponentKey
+                                                                      )
+                                                                    ] || ''
+                                                                  }
+                                                                  disabled
+                                                                  placeholder='Server Time'
+                                                                />
+                                                              )}
+
+                                                              {/* Toggle Switch */}
+                                                              <label className='toggle-switch'>
+                                                                <input
+                                                                  type='checkbox'
+                                                                  onChange={() =>
+                                                                    handleToggleChange(
                                                                       segmentKey,
                                                                       subcomponentKey
                                                                     )
-                                                                  ] || ''
-                                                                }
-                                                                onChange={e =>
-                                                                  handleValueChange(
-                                                                    segmentKey,
-                                                                    subcomponentKey,
-                                                                    e.target
-                                                                      .value
-                                                                  )
-                                                                }
-                                                              />
-                                                            )}
-
-                                                          {inputMode[
-                                                            subcomponentPath
-                                                          ] ===
-                                                            'serverTime' && (
-                                                            <input
-                                                              type='text'
-                                                              className='subcomponent-textbox'
-                                                              value={
-                                                                mappedValues[
-                                                                  getFieldKey(
-                                                                    segmentKey,
-                                                                    subcomponentKey
-                                                                  )
-                                                                ] || ''
-                                                              }
-                                                              disabled
-                                                              placeholder='Server Time'
-                                                            />
-                                                          )}
-
-                                                          {/* Toggle Switch */}
-                                                          <label className='toggle-switch'>
-                                                            <input
-                                                              type='checkbox'
-                                                              onChange={() =>
-                                                                handleToggleChange(
+                                                                  }
+                                                                  checked={
+                                                                    toggleValidation[
+                                                                      getFieldKey(
+                                                                        segmentKey,
+                                                                        subcomponentKey
+                                                                      )
+                                                                    ]
+                                                                      ?.isToggleOn ||
+                                                                    false
+                                                                  }
+                                                                />
+                                                                <span className='slider'></span>
+                                                              </label>
+                                                            </div>
+                                                            <button
+                                                              className='add-val-btn'
+                                                              onClick={() =>
+                                                                handleAddValue(
                                                                   segmentKey,
-                                                                  subcomponentKey
+                                                                  field.key,
+                                                                  component.component_position,
+                                                                  subcomponent.subcomponent_position
                                                                 )
                                                               }
-                                                              checked={
-                                                                toggleValidation[
-                                                                  getFieldKey(
-                                                                    segmentKey,
-                                                                    subcomponentKey
-                                                                  )
-                                                                ]?.isToggleOn ||
-                                                                false
-                                                              }
-                                                            />
-                                                            <span className='slider'></span>
-                                                          </label>
-                                                        </div>
-                                                        <button
-                                                          className='add-val-btn'
-                                                          onClick={() =>
-                                                            handleAddValue(
-                                                              segmentKey,
-                                                              field.key,
-                                                              component.component_position,
-                                                              subcomponent.subcomponent_position
-                                                            )
-                                                          }
-                                                        >
-                                                          Add Val
-                                                        </button>
-                                                      </div>
-                                                    )
-                                                  }
+                                                            >
+                                                              Add Val
+                                                            </button>
+                                                          </div>
+                                                        )
+                                                      }
+                                                    )}
+                                                  </div>
                                                 )}
-                                              </div>
-                                            )}
-                                        </div>
-                                      )
-                                    })}
+                                            </div>
+                                          )
+                                        })}
+                                      </div>
+                                    )}
                                   </div>
-                                )}
-                              </div>
+                                )
+                              }
                             )
-                          })
-                        ) : (
-                          <p>No required fields available.</p>
-                        )}
+                          ) : (
+                            <p>No required fields available.</p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
-              {/* ) : (
+                    )
+                  })}
+                {/* ) : (
                 <p>Please select a segment from the sidebar.</p>
               )} */}
 
-              {data[selectedSegment]?.repeating && (
-                <div className='button-container'>
-                  {repeatedSegments[selectedSegment] > 1 ? (
-                    <>
+                {data[selectedSegment]?.repeating && (
+                  <div className='button-container'>
+                    {repeatedSegments[selectedSegment] > 1 ? (
+                      <>
+                        <button
+                          className='add-button'
+                          onClick={() =>
+                            handleAddSegment(selectedSegment.split('.')[0])
+                          }
+                        >
+                          ADD
+                        </button>
+                        <button
+                          className='delete-button'
+                          onClick={() =>
+                            handleDeleteSegment(selectedSegment.split('.')[0])
+                          }
+                        >
+                          DELETE
+                        </button>
+                      </>
+                    ) : (
                       <button
                         className='add-button'
                         onClick={() =>
@@ -2673,29 +2755,12 @@ const HL7MappingTool = () => {
                       >
                         ADD
                       </button>
-                      <button
-                        className='delete-button'
-                        onClick={() =>
-                          handleDeleteSegment(selectedSegment.split('.')[0])
-                        }
-                      >
-                        DELETE
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className='add-button'
-                      onClick={() =>
-                        handleAddSegment(selectedSegment.split('.')[0])
-                      }
-                    >
-                      ADD
-                    </button>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className='next-button-container'>
             <button className='next-button' onClick={handlePreviousStep}>
@@ -2704,9 +2769,9 @@ const HL7MappingTool = () => {
             <button
               className='next-button'
               onClick={handleNext}
-              disabled={isLoading}
+              disabled={isLoadingCreateChannel}
             >
-              {isLoading ? 'Creating...' : 'Create Channel'}
+              {isLoadingCreateChannel ? 'Creating...' : 'Create Channel'}
             </button>
           </div>
         </div>

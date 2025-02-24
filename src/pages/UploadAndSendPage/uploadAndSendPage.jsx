@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Rings } from 'react-loader-spinner'
 import './uploadAndSendPage.css'
 import api from '../../api/apiCalls'
 import '../alerts/alerts.css'
@@ -92,48 +93,49 @@ const UploadAndSendPage = () => {
           <img src={Arrrowback} alt='Arrowback' className='back-logo' />
         </button>
       </div>
-
-      <div className='upload-send-container hl7-container'>
-        <h1 className='upload-send-heading'>Upload JSON and Send Data</h1>
-        <div className='upload-section'>
-          <label htmlFor='jsonFile' className='upload-label'>
-            Upload JSON File:
-          </label>
-          <input
-            type='file'
-            id='jsonFile'
-            accept='.json'
-            onChange={handleFileUpload}
-            className='upload-input'
-          />
-          {uploadError && <p className='error-message'>{uploadError}</p>}
+      {isLoading ? (
+        <div className='spinner-container'>
+          <Rings color='#007bff' height={80} width={80} />
+          <p>Fetching HL7 message, please wait...</p>
         </div>
-        <div className='url-section'>
-          <label htmlFor='url' className='url-label'>
-            Enter Channel ID:
-          </label>
-          <input
-            type='text'
-            id='url'
-            value={channelId}
-            onChange={e => setChannelId(e.target.value)}
-            className='url-input'
-            placeholder='Username-MessageType'
-          />
-        </div>
-        <button
-          className='send-button'
-          onClick={handleSend}
-          disabled={isLoading}
-        >
-          {isLoading ? 'Sending...' : 'Send'}
-        </button>
-        {isLoading && (
-          <div className='spinner-container'>
-            <Spinner radius={30} color={'#007bff'} stroke={3} visible={true} />
+      ) : (
+        <div className='upload-send-container hl7-container'>
+          <h1 className='upload-send-heading'>Upload JSON and Send Data</h1>
+          <div className='upload-section'>
+            <label htmlFor='jsonFile' className='upload-label'>
+              Upload JSON File:
+            </label>
+            <input
+              type='file'
+              id='jsonFile'
+              accept='.json'
+              onChange={handleFileUpload}
+              className='upload-input'
+            />
+            {uploadError && <p className='error-message'>{uploadError}</p>}
           </div>
-        )}
-      </div>
+          <div className='url-section'>
+            <label htmlFor='url' className='url-label'>
+              Enter Channel ID:
+            </label>
+            <input
+              type='text'
+              id='url'
+              value={channelId}
+              onChange={e => setChannelId(e.target.value)}
+              className='url-input'
+              placeholder='Username-MessageType'
+            />
+          </div>
+          <button
+            className='send-button'
+            onClick={handleSend}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Sending...' : 'Send'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

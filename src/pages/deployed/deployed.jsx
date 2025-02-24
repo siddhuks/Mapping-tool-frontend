@@ -31,7 +31,7 @@ const DeployedPage = () => {
           className='copy-icon'
           onClick={() => {
             navigator.clipboard.writeText(channelId)
-            alert('Channel ID copied to clipboard!')
+            // alert('Channel ID copied to clipboard!')
           }}
         />
       </p>

@@ -23,9 +23,14 @@ const HL7Messages = () => {
         // Ensure proper handling of the "messages" string
         if (typeof response === 'string') {
           const parsedResponse = JSON.parse(response) // Parse string if it is JSON
-          setMessage(parsedResponse.messages || 'No messages available.')
+          setMessage(
+            parsedResponse.messages ||
+              'No messages available / Validation failed.'
+          )
         } else {
-          setMessage(response.messages || 'No messages available.')
+          setMessage(
+            response.messages || 'No messages available / Validation failed.'
+          )
         }
       } catch (error) {
         console.error('Error fetching messages:', error)

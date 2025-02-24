@@ -308,7 +308,7 @@ select {
     /* Vertically center items */
     justify-content: space-between;
     /* Push chevron to the far right */
-    padding: 10px 15px;
+    padding: 5px 10px;
     /* Add padding for spacing */
     background-color: #f9f9f9;
     /* Subtle background color */
