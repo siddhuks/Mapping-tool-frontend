@@ -13,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState('')
 
   const handleLogin = async event => {
-    event.preventDefault() // Prevent the form from refreshing the page
+    event.preventDefault()
 
     const userData = {
       username,

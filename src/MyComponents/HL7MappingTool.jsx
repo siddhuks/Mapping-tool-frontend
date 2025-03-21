@@ -37,6 +37,32 @@ const HL7MappingTool = () => {
   const [fieldValidations, setFieldValidations] = useState({}) // Stores validation rules per field/component/subcomponent
   const [availableValidationTypes, setAvailableValidationTypes] = useState({})
   const [trimWhitespace, setTrimWhitespace] = useState({})
+  const [hoveredCategory, setHoveredCategory] = useState(null)
+
+  const messageTypes = {
+    ADT: [
+      'ADT_A01',
+      'ADT_A02',
+      'ADT_A03',
+      'ADT_A04',
+      'ADT_A05',
+      'ADT_A08',
+      'ADT_A11',
+      'ADT_A12',
+      'ADT_A13',
+      'ADT_A31'
+    ],
+    ORM: ['ORM_O01'],
+    SIU: ['SIU_S12', 'SIU_S13', 'SIU_S14', 'SIU_S15', 'SIU_S26'],
+    ORU: ['ORU_R01']
+  }
+
+  const handleSelect = subType => {
+    setSelectedMessageType(subType)
+    setHoveredCategory(null)
+
+    console.log('Selected HL7 Message Type:', subType)
+  }
 
   const getSegmentMappedValues = useCallback(
     segmentKey => {
@@ -735,27 +761,145 @@ const HL7MappingTool = () => {
   }
 
   // Handle message type selection
-  const handleMessageTypeChange = event => {
-    setSelectedMessageType(event.target.value)
-    setError('')
+  // const handleMessageTypeChange = event => {
+  //   setSelectedMessageType(event.target.value)
+  //   setError('')
+  // }
+
+  // const handleFileUpload = event => {
+  //   const file = event.target.files[0]
+  //   if (!file) return
+
+  //   const reader = new FileReader()
+  //   reader.onload = () => {
+  //     try {
+  //       const jsonContent = JSON.parse(reader.result)
+  //       setJsonKeys(flattenJsonKeys(jsonContent))
+  //     } catch (err) {
+  //       console.error('Error parsing JSON file:', err)
+  //       setError('Invalid JSON file.')
+  //       setJsonKeys([]) // Ensure it falls back to an empty array
+  //     }
+  //   }
+  //   reader.readAsText(file)
+  // }
+
+  const xmlToJson = xml => {
+    let obj = {}
+
+    if (xml.nodeType === 1) {
+      // Element node
+      if (xml.attributes.length > 0) {
+        obj['@attributes'] = {}
+        for (let j = 0; j < xml.attributes.length; j++) {
+          const attribute = xml.attributes.item(j)
+          obj['@attributes'][attribute.nodeName] = attribute.nodeValue
+        }
+      }
+    } else if (xml.nodeType === 3) {
+      // Text node
+      return xml.nodeValue.trim() ? xml.nodeValue.trim() : null
+    }
+
+    if (xml.hasChildNodes()) {
+      for (let i = 0; i < xml.childNodes.length; i++) {
+        const item = xml.childNodes.item(i)
+        const nodeName = item.nodeName
+        const nodeValue = xmlToJson(item)
+
+        if (nodeValue === null) continue // Skip empty text nodes
+
+        if (typeof obj[nodeName] === 'undefined') {
+          obj[nodeName] = nodeValue
+        } else {
+          if (!Array.isArray(obj[nodeName])) {
+            obj[nodeName] = [obj[nodeName]]
+          }
+          obj[nodeName].push(nodeValue)
+        }
+      }
+    }
+    return obj
   }
 
   const handleFileUpload = event => {
     const file = event.target.files[0]
     if (!file) return
 
+    console.log(`File selected: ${file.name}, Type: ${file.type}`)
+
     const reader = new FileReader()
     reader.onload = () => {
       try {
-        const jsonContent = JSON.parse(reader.result)
-        setJsonKeys(flattenJsonKeys(jsonContent))
+        let fileContent = reader.result.trim()
+        console.log('Raw File Content Loaded:', fileContent)
+
+        if (file.type === 'application/json' || file.name.endsWith('.json')) {
+          console.log('Processing as JSON...')
+          const jsonContent = JSON.parse(fileContent)
+          console.log('Parsed JSON Content:', jsonContent)
+          setJsonKeys(flattenJsonKeys(jsonContent))
+        } else if (file.type === 'text/xml' || file.name.endsWith('.xml')) {
+          console.log('Processing as XML...')
+
+          if (fileContent.startsWith('<0>')) {
+            console.warn('Invalid XML root detected. Fixing...')
+            fileContent = fileContent
+              .replace('<0>', '<root>')
+              .replace('</0>', '</root>')
+          }
+
+          const parser = new DOMParser()
+          const xmlDoc = parser.parseFromString(fileContent, 'text/xml')
+
+          if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
+            console.error(
+              'XML Parsing Error:',
+              xmlDoc.getElementsByTagName('parsererror')[0].textContent
+            )
+            setError('Invalid XML file.')
+            return
+          }
+
+          console.log('Parsed XML Document:', xmlDoc)
+          let jsonConverted = xmlToJson(xmlDoc)
+          console.log('Converted XML to JSON:', jsonConverted)
+
+          // Append `.toString()` to all final text values
+          jsonConverted = addToStringToValues(jsonConverted)
+
+          console.log('Final JSON after appending .toString():', jsonConverted)
+          setJsonKeys(flattenJsonKeys(jsonConverted))
+        } else {
+          throw new Error('Unsupported file format.')
+        }
       } catch (err) {
-        console.error('Error parsing JSON file:', err)
-        setError('Invalid JSON file.')
-        setJsonKeys([]) // Ensure it falls back to an empty array
+        console.error('Error parsing file:', err)
+        setError(
+          'Invalid file format. Ensure you upload a valid JSON or XML file.'
+        )
+        setJsonKeys([])
       }
     }
+
     reader.readAsText(file)
+  }
+
+  const addToStringToValues = obj => {
+    if (typeof obj === 'string') {
+      return obj + '.toString()'
+    } else if (Array.isArray(obj)) {
+      return obj.map(addToStringToValues)
+    } else if (typeof obj === 'object' && obj !== null) {
+      let newObj = {}
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          newObj[key] = addToStringToValues(obj[key])
+        }
+      }
+      return newObj
+    }
+    return obj
   }
 
   const flattenJsonKeys = (obj, prefix = '') => {
@@ -770,6 +914,8 @@ const HL7MappingTool = () => {
         }
       }
     }
+    console.log('Flattened JSON Keys for Dropdown:', keys)
+
     return keys
   }
 
@@ -1584,7 +1730,11 @@ const HL7MappingTool = () => {
               if (!isNaN(part)) {
                 // Numeric part as array index
                 msgPath += `[${part}]`
-              } else {
+              }
+              // else if (part === '#text') {
+              //   msgPath += '.toString()'
+              // }
+              else {
                 // String part as object property
                 msgPath += `['${part}']`
               }
@@ -1676,32 +1826,42 @@ const HL7MappingTool = () => {
     <div className='hl7-mapping-tool'>
       {/* <div className='controls'> */}
       {step === 1 && (
-        <div className='step-container hl7-container'>
+        <div className='hl7-container'>
           <h1>Select HL7 Message Type</h1>
-          <select
-            onChange={handleMessageTypeChange}
-            value={selectedMessageType}
-            className='message-type-select'
-          >
-            <option value=''>Select a message type</option>
-            <option value='ADT_A01'>ADT_A01</option>
-            <option value='ADT_A02'>ADT_A02</option>
-            <option value='ADT_A03'>ADT_A03</option>
-            <option value='ADT_A04'>ADT_A04</option>
-            <option value='ADT_A05'>ADT_A05</option>
-            <option value='ADT_A08'>ADT_A08</option>
-            <option value='ADT_A11'>ADT_A11</option>
-            <option value='ADT_A12'>ADT_A12</option>
-            <option value='ADT_A13'>ADT_A13</option>
-            <option value='ADT_A31'>ADT_A31</option>
-            <option value='ORM_O01'>ORM_O01</option>
-            <option value='SIU_S12'>SIU_S12</option>
-            <option value='SIU_S13'>SIU_S13</option>
-            <option value='SIU_S14'>SIU_S14</option>
-            <option value='SIU_S15'>SIU_S15</option>
-            <option value='SIU_S26'>SIU_S26</option>
-            <option value='ORU_R01'>ORU_R01</option>
-          </select>
+
+          <div className='dropdown-container'>
+            <div className='dropdown'>
+              {Object.keys(messageTypes).map(category => (
+                <div
+                  key={category}
+                  className='dropdown-category'
+                  onMouseEnter={() => setHoveredCategory(category)}
+                  onMouseLeave={() => setHoveredCategory(null)}
+                >
+                  <strong>{category}</strong>
+                  {hoveredCategory === category && (
+                    <div className='dropdown-submenu'>
+                      {messageTypes[category].map(subType => (
+                        <div
+                          key={subType}
+                          className='dropdown-item'
+                          onClick={() => handleSelect(subType)}
+                        >
+                          <strong>{subType}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {selectedMessageType && (
+              <p>
+                <strong>Selected Type: {selectedMessageType}</strong>
+              </p>
+            )}
+          </div>
           <button className='next-button' onClick={handleNextStep}>
             Next
           </button>
@@ -1716,10 +1876,10 @@ const HL7MappingTool = () => {
       ) : (
         step === 2 && (
           <div className='step-container hl7-container'>
-            <h1>Upload JSON</h1>
+            <h1>Upload JSON/XML file</h1>
             <input
               type='file'
-              accept='.json'
+              accept='.json, .xml'
               onChange={handleFileUpload}
               className='upload-json'
             />

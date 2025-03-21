@@ -18,23 +18,117 @@ const UploadAndSendPage = () => {
     navigate('/homepage')
   }
 
+  // const handleFileUpload = event => {
+  //   const file = event.target.files[0]
+  //   if (file && file.type === 'application/json' ||) {
+  //     setUploadError('')
+  //     const reader = new FileReader()
+  //     reader.onload = e => {
+  //       try {
+  //         const jsonData = JSON.parse(e.target.result)
+  //         setJsonFile(jsonData)
+  //       } catch (error) {
+  //         setUploadError('Invalid JSON file')
+  //       }
+  //     }
+  //     reader.readAsText(file)
+  //   } else {
+  //     setUploadError('Please upload a valid JSON file')
+  //   }
+  // }
+
   const handleFileUpload = event => {
     const file = event.target.files[0]
-    if (file && file.type === 'application/json') {
-      setUploadError('')
-      const reader = new FileReader()
-      reader.onload = e => {
-        try {
-          const jsonData = JSON.parse(e.target.result)
+    if (!file) {
+      setUploadError('No file selected.')
+      return
+    }
+
+    console.log(`File selected: ${file.name}, Type: ${file.type}`)
+
+    const reader = new FileReader()
+    reader.onload = e => {
+      try {
+        let fileContent = e.target.result.trim()
+        console.log('Raw File Content Loaded:', fileContent)
+
+        if (file.type === 'application/json' || file.name.endsWith('.json')) {
+          console.log('Processing as JSON...')
+          const jsonData = JSON.parse(fileContent)
           setJsonFile(jsonData)
-        } catch (error) {
-          setUploadError('Invalid JSON file')
+        } else if (file.type === 'text/xml' || file.name.endsWith('.xml')) {
+          console.log('Processing as XML...')
+
+          // Convert XML to JSON
+          const parser = new DOMParser()
+          const xmlDoc = parser.parseFromString(fileContent, 'text/xml')
+
+          if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
+            console.error(
+              'XML Parsing Error:',
+              xmlDoc.getElementsByTagName('parsererror')[0].textContent
+            )
+            setUploadError('Invalid XML file.')
+            return
+          }
+
+          console.log('Parsed XML Document:', xmlDoc)
+          let jsonConverted = xmlToJson(xmlDoc)
+          console.log('Converted XML to JSON:', jsonConverted)
+
+          setJsonFile(jsonConverted)
+        } else {
+          throw new Error('Unsupported file format.')
+        }
+
+        setUploadError('') // Clear errors if successful
+      } catch (error) {
+        console.error('Error parsing file:', error)
+        setUploadError(
+          'Invalid file format. Please upload a valid JSON or XML file.'
+        )
+        setJsonFile(null) // Clear stored file
+      }
+    }
+
+    reader.readAsText(file)
+  }
+
+  const xmlToJson = xml => {
+    let obj = {}
+    if (xml.nodeType === 1) {
+      // Element node
+      if (xml.attributes.length > 0) {
+        obj['@attributes'] = {}
+        for (let j = 0; j < xml.attributes.length; j++) {
+          const attribute = xml.attributes.item(j)
+          obj['@attributes'][attribute.nodeName] = attribute.nodeValue
         }
       }
-      reader.readAsText(file)
-    } else {
-      setUploadError('Please upload a valid JSON file')
+    } else if (xml.nodeType === 3) {
+      // Text node
+      return xml.nodeValue.trim() ? xml.nodeValue.trim() : null
     }
+
+    if (xml.hasChildNodes()) {
+      for (let i = 0; i < xml.childNodes.length; i++) {
+        const item = xml.childNodes.item(i)
+        const nodeName = item.nodeName
+        const nodeValue = xmlToJson(item)
+
+        if (nodeValue === null) continue // Skip empty text nodes
+
+        if (typeof obj[nodeName] === 'undefined') {
+          obj[nodeName] = nodeValue
+        } else {
+          if (!Array.isArray(obj[nodeName])) {
+            obj[nodeName] = [obj[nodeName]]
+          }
+          obj[nodeName].push(nodeValue)
+        }
+      }
+    }
+    return obj
   }
 
   const handleSend = async () => {
@@ -107,7 +201,7 @@ const UploadAndSendPage = () => {
             <input
               type='file'
               id='jsonFile'
-              accept='.json'
+              accept='.json, .xml'
               onChange={handleFileUpload}
               className='upload-input'
             />

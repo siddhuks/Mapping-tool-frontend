@@ -3,9 +3,11 @@ import utils from "../utils";
 
 const instance = axios.create({
     baseURL: 'https://hh-backend-webapp-cnc4bqamfjb2fnbw.westeurope-01.azurewebsites.net/',
-    timeout: 200000,
+    // baseURL: 'http://localhost:8000/',
+
+    timeout: 100000,
     headers: {
-        'Content-Type': 'application/json', // Example headers
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${sessionStorage.getItem(utils.constants.localStorageItem.TOKEN)}`,
     },
 });
